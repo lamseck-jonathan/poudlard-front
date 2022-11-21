@@ -1,5 +1,5 @@
 <template>
-  <q-form>
+  <q-form @submit.prevent="onSubmit">
     <div class="row">
       <q-input
         outlined
@@ -30,7 +30,7 @@
       <q-select
         outlined
         class="col-6 q-pr-sm"
-        v-model="typeTest"
+        v-model="selectedTypeTest"
         :options="listeTypeTest"
         option-value="id"
         option-label="label"
@@ -53,21 +53,47 @@
         :rules="[(val) => (val && val.length > 0) || 'Please type something']"
       />
     </div>
-    <div v-if="typeTest?.type_test === 'QCM'" class="q-gutter-y-sm q-py-sm">
-      <reponse-input label="Reponse 1" v-model="reponseQCM1"></reponse-input>
-      <reponse-input label="Reponse 2" v-model="reponseQCM2"></reponse-input>
-      <reponse-input label="Reponse 3" v-model="reponseQCM3"></reponse-input>
+    <div style="height: 250px">
+      <transition name="fade" mode="out-in">
+        <div v-if="selectedTypeTest?.type_test === 'QCM'">
+          <div class="q-gutter-y-sm q-py-sm">
+            <reponse-input
+              label="Reponse 1"
+              v-model="reponseQCM1"
+            ></reponse-input>
+            <reponse-input
+              label="Reponse 2"
+              v-model="reponseQCM2"
+            ></reponse-input>
+            <reponse-input
+              label="Reponse 3"
+              v-model="reponseQCM3"
+            ></reponse-input>
+          </div>
+        </div>
+      </transition>
+      <transition name="fade" mode="out-in">
+        <div
+          v-if="selectedTypeTest?.type_test === 'QCU'"
+          class="q-gutter-y-sm q-py-sm"
+        >
+          <qcu-input v-model="reponsesQCU"></qcu-input>
+        </div>
+      </transition>
+
+      <transition name="fade" mode="out-in">
+        <div
+          v-if="selectedTypeTest?.type_test === 'QR'"
+          class="q-gutter-y-sm q-py-sm"
+        >
+          <q-input outlined v-model="reponseQR" label="Reponse" />
+        </div>
+      </transition>
     </div>
-    <div v-if="typeTest?.type_test === 'QCU'" class="q-gutter-y-sm q-py-sm">
-      <qcu-input v-model="reponsesQCU"></qcu-input>
-      {{ reponsesQCU }}
-    </div>
-    <div v-if="typeTest?.type_test === 'QR'" class="q-gutter-y-sm q-py-sm">
-      <q-input outlined v-model="reponseQR" label="Reponse" />
-    </div>
+
     <div class="row justify-between">
       <q-space />
-      <q-btn @click="submit" label="ajouter" color="primary"></q-btn>
+      <q-btn type="submit" label="ajouter" color="primary"></q-btn>
     </div>
   </q-form>
 </template>
@@ -82,12 +108,12 @@ import { Reponse } from 'src/model/Reponse.interface';
 
 const emit = defineEmits(['submitted']);
 
-const typeTest = ref<TypeTest>();
+const selectedTypeTest = ref<TypeTest>();
 const test = reactive<Test>({
   id: '',
   titre: '',
   description: '',
-  categorie: 'QCMU',
+  categorie: '',
   duree: 0,
   bareme: 0,
   choix: [],
@@ -115,31 +141,52 @@ const listeTypeTest = ref<TypeTest[]>([
 const reponseQCM1 = ref();
 const reponseQCM2 = ref();
 const reponseQCM3 = ref();
-const reponseQR = ref();
 const reponsesQCU = ref();
+const reponseQR = ref();
 
-function submit() {
-  if (typeTest.value?.type_test === 'QCM') {
+function onSubmit() {
+  if (selectedTypeTest.value?.type_test === 'QCM') {
     test.choix?.push(reponseQCM1.value);
     test.choix?.push(reponseQCM2.value);
     test.choix?.push(reponseQCM3.value);
     console.log(test);
-    console.log(reponseQCM1.value);
-    console.log(reponseQCM2.value);
-    console.log(reponseQCM3.value);
     emit('submitted', test);
-  } else if (typeTest.value?.type_test === 'QCU') {
+  } else if (selectedTypeTest.value?.type_test === 'QCU') {
     reponsesQCU.value.forEach((item: Reponse) => {
       test.choix?.push(item);
     });
     console.log(test);
-    console.log(reponsesQCU);
     emit('submitted', test);
   } else {
     test.reponse = reponseQR.value;
     console.log(test);
-    console.log(reponseQR.value);
     emit('submitted', test);
   }
 }
 </script>
+
+<style scoped lang="scss">
+.fade-enter-from {
+  opacity: 0;
+  transform: translateX(-400px);
+}
+.fade-enter-active {
+  transition: all 0.5s ease-out;
+}
+.fade-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-leave-from {
+  opacity: 1;
+}
+
+.fade-leave-active {
+  transition: all;
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
