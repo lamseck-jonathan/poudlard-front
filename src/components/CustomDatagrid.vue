@@ -19,7 +19,7 @@
 
       <q-btn
         round
-        :color="isCompactMode ? 'blue-grey' : 'primary'"
+        :color="isCompactMode ? 'blue-grey-14' : 'blue-grey-5'"
         size="sm"
         icon="vertical_align_center"
         @click="isCompactMode = !isCompactMode"
@@ -61,7 +61,7 @@
 
     <!-- table header customization -->
     <template v-slot:header="props">
-      <q-tr :props="props" class="bg-blue-grey-14 text-white">
+      <q-tr :props="props" class="bg-blue-grey-5 text-white">
         <q-th
           v-for="col in props.cols"
           :key="col.name"
@@ -148,9 +148,10 @@
         :max-pages="4"
         icon-first="keyboard_double_arrow_left"
         icon-last="keyboard_double_arrow_right"
-        active-color="primary"
+        active-color="blue-grey-7"
         direction-links
         boundary-links
+        color="blue-grey-5"
       />
     </template>
 
