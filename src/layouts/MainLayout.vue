@@ -28,7 +28,7 @@
         <q-img
           src="M_high_logo_transparent.png"
           alt="logo-app-side-menu"
-          width="200px"
+          width="180px"
         />
       </q-toolbar>
 
@@ -43,7 +43,7 @@
             </q-avatar>
           </q-item-section>
           <q-item-section class="navbar_title text-gray">
-            <q-item-label class="user_name text-uppercase">
+            <q-item-label class="user_name text-uppercase text-weight-bold">
               {{ 'Tafita' + ' ' + 'Raza' }}
             </q-item-label>
           </q-item-section>
