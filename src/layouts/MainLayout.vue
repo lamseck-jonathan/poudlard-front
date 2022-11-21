@@ -1,7 +1,7 @@
 <template>
   <q-layout view="LHh lpR lFf">
     <q-header>
-      <q-toolbar class="bg-white nav-bar q-px-lg">
+      <q-toolbar class="bg-white nav-bar">
         <q-toolbar-title class="text-primary flex items-center">
           <q-icon
             :name="mainLayoutStore.navbarPageInfo.icon"
@@ -143,5 +143,6 @@ const mainLayoutStore = useMainLayoutStore();
 .nav-bar {
   border-bottom: solid rgb(232, 232, 232) 0.5px;
   height: 4rem;
+  padding: 0px 2.5rem;
 }
 </style>
