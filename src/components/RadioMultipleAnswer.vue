@@ -14,8 +14,13 @@ import AnswerItem from './AnswerItem.vue';
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
-  answers: { type: Array as PropType<Reponse[]>, required: true },
-  modelValue: { type: Array as PropType<Reponse[]> },
+  answers: {
+    type: Array as PropType<Reponse[]>,
+    required: true,
+  },
+  modelValue: {
+    type: Array as PropType<Reponse[]>,
+  },
 });
 const selected = ref<Reponse[]>(props.modelValue as Reponse[]);
 function selectAnswer(option: ChoixReponse) {

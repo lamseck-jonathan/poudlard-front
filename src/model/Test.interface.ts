@@ -1,13 +1,15 @@
+import { Reponse } from './Reponse.interface';
+
 export interface Test {
   id: string;
   titre: string;
   description: string;
-  categorie: 'QCMU' | 'QCMM' | 'QR';
+  categorie: string;
   duree: number;
   bareme: number;
-  choix?: TestChoix[];
+  choix?: Reponse[];
   reponse?: string;
-  type: string;
+  type: TypeTest;
 }
 
 /** JUST FOR INFORMATION */
@@ -16,7 +18,11 @@ export const test: Test = {
   titre: 'Tag pour aller à la ligne',
   description: 'ma description',
   categorie: 'QCMU',
-  type: 'HTML',
+  type: {
+    id: 1,
+    type_test: 'QCM',
+    label: 'Question Choix Multiple',
+  },
   duree: 30000,
   bareme: 4,
   choix: [
@@ -42,4 +48,10 @@ export interface TestChoix {
   id: number;
   reponse: string;
   isTrue: boolean;
+}
+
+export interface TypeTest {
+  id: number;
+  type_test: string;
+  label: string;
 }

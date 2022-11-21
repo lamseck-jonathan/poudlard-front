@@ -20,8 +20,13 @@ import { Reponse } from '../model/Reponse.interface';
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
-  answers: { type: Array as PropType<Reponse[]> },
-  modelValue: { type: Object as PropType<Reponse> },
+  answers: {
+    type: Array as PropType<Reponse[]>,
+  },
+  modelValue: {
+    type: Object as PropType<Reponse>,
+    required: true,
+  },
 });
 const activeOption = ref<string | undefined>(props?.modelValue?.reponse);
 function activate(option: Reponse) {
