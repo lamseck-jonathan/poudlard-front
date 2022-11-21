@@ -6,17 +6,17 @@
 
 <script setup lang="ts">
 import ItemTest from 'src/components/ItemTest.vue';
-import Test from 'src/models/Test';
+import { Test } from 'src/model/Test.interface';
 
 const tests: Test[] = [
   {
-    id: 1,
-    test_libelle: 'Js Callback',
-    test_description: 'Decrivez ce que vous entendez par Callback ',
-    test_categorie: '"Js',
-    test_duree: 30000,
-    test_bareme: 4,
-    test_type: 'QuestionChoixMultiple',
+    id: '1',
+    titre: 'Js Callback',
+    description: 'Decrivez ce que vous entendez par Callback ',
+    categorie: 'QCMM',
+    duree: 30000,
+    bareme: 4,
+    type: 'QuestionChoixMultiple',
     choix: [
       {
         id: 1,
@@ -36,13 +36,13 @@ const tests: Test[] = [
     ],
   },
   {
-    id: 2,
-    test_libelle: 'Js Callback',
-    test_description: 'Decrivez ce que vous entendez par Callback ',
-    test_categorie: '"Js',
-    test_duree: 30000,
-    test_bareme: 4,
-    test_type: 'QuestionChoixMultiple',
+    id: '2',
+    titre: 'Js Promise',
+    description: 'Decrivez ce que vous entendez par Promise',
+    categorie: 'QCMM',
+    duree: 30000,
+    bareme: 4,
+    type: 'QuestionChoixMultiple',
     choix: [
       {
         id: 1,
