@@ -1,9 +1,13 @@
 <template>
   <q-layout view="LHh lpR lFf">
     <q-header>
-      <q-toolbar class="bg-white nav-bar">
+      <q-toolbar class="bg-white nav-bar q-px-lg">
         <q-toolbar-title class="text-primary flex items-center">
-          <q-icon :name="mainLayoutStore.navbarPageInfo.icon" size="1.5rem" />
+          <q-icon
+            :name="mainLayoutStore.navbarPageInfo.icon"
+            class="q-mr-sm"
+            size="2rem"
+          />
           <div class="text-weight-bold text-uppercase">
             {{ mainLayoutStore.navbarPageInfo.title }}
           </div>
@@ -13,13 +17,14 @@
 
     <q-drawer
       :model-value="true"
+      class="text-blue-grey-9"
       show-if-above
       side="left"
       :width="275"
       :mini-width="70"
       :breakpoint="0"
     >
-      <q-toolbar class="navbar_app_logo">
+      <q-toolbar class="row justify-center">
         <q-img
           src="M_high_logo_transparent.png"
           alt="logo-app-side-menu"
@@ -77,7 +82,7 @@
       </q-item>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="q-ml-lg q-pr-lg">
       <router-view />
     </q-page-container>
   </q-layout>
@@ -128,3 +133,15 @@ const menuItems: SideBarMenu[] = [
 
 const mainLayoutStore = useMainLayoutStore();
 </script>
+
+<style lang="scss">
+.q-drawer {
+  z-index: 2000;
+  box-shadow: 1px 0px 10px rgb(195, 194, 194);
+}
+
+.nav-bar {
+  border-bottom: solid rgb(232, 232, 232) 0.5px;
+  height: 4rem;
+}
+</style>

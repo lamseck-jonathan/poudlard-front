@@ -2,3 +2,22 @@
 .w-full {
   width: 100%;
 }
+
+/**************************************
+**       FONT FAMILY DECLARATIONS    **
+**************************************/
+
+@font-face {
+  font-family: 'OpenSans Regular';
+  src: url(src/assets/fonts/OpenSans-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'OpenSans SemiBold';
+  src: url(src/assets/fonts/OpenSans-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: 'OpenSans Bold';
+  src: url(src/assets/fonts/OpenSans-Bold.ttf);
+}
