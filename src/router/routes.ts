@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
+import authRoutes from 'src/router/auth.routes';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -10,6 +11,7 @@ const routes: RouteRecordRaw[] = [
       { path: '/tests/', component: () => import('pages/ListTestsPage.vue') },
     ],
   },
+  ...authRoutes,
 
   // Always leave this as last one,
   // but you can also remove it
