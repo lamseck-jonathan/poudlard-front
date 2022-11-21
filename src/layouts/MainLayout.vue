@@ -70,6 +70,7 @@
       <q-item
         class="text-blue__dark item-menu fixed-bottom q-mb-sm"
         active-class="text-primary"
+        :to="'auth/login'"
         clickable
       >
         <q-item-section avatar>
