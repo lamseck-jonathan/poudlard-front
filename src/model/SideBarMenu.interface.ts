@@ -5,5 +5,6 @@ export interface SideBarMenu {
   title: string;
   isExpanded?: boolean;
   routeName: string;
+  path: string;
   children?: Array<SideBarMenu>;
 }

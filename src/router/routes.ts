@@ -5,8 +5,24 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      {
+        path: '',
+        redirect: 'dashboard',
+      },
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('pages/DashboardPage.vue'),
+      },
+      {
+        path: 'utilisateurs',
+        name: 'utilisateur',
+        component: () => import('pages/UtilisateursPage.vue'),
+      },
+    ],
   },
+
   ...authRoutes,
 
   // Always leave this as last one,

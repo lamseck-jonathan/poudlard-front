@@ -2,21 +2,29 @@
   <q-layout view="LHh lpR lFf">
     <q-header>
       <q-toolbar class="bg-white nav-bar">
-        <q-toolbar-title class="text-weight-bold text-primary text-uppercase">
-          Utilisateurs
+        <q-toolbar-title class="text-primary flex items-center">
+          <q-icon
+            :name="mainLayoutStore.navbarPageInfo.icon"
+            class="q-mr-sm"
+            size="2rem"
+          />
+          <div class="text-weight-bold text-uppercase">
+            {{ mainLayoutStore.navbarPageInfo.title }}
+          </div>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       :model-value="true"
+      class="text-blue-grey-9"
       show-if-above
       side="left"
       :width="275"
       :mini-width="70"
       :breakpoint="0"
     >
-      <q-toolbar class="navbar_app_logo">
+      <q-toolbar class="row justify-center">
         <q-img
           src="M_high_logo_transparent.png"
           alt="logo-app-side-menu"
@@ -46,6 +54,7 @@
           :key="item.title"
           class="item-menu"
           active-class="text-primary"
+          :to="item.path"
           clickable
         >
           <q-item-section avatar>
@@ -73,7 +82,6 @@
       </q-item>
     </q-drawer>
 
-    <!-- content area -->
     <q-page-container class="q-ml-lg q-pr-lg">
       <router-view />
     </q-page-container>
@@ -82,35 +90,48 @@
 
 <script setup lang="ts">
 import { SideBarMenu } from 'src/model/SideBarMenu.interface';
+import { useMainLayoutStore } from 'src/stores/main-layout-store';
 
-// Simple menu items (not expandable)
-const menuItems: Array<SideBarMenu> = [
+const menuItems: SideBarMenu[] = [
+  {
+    icon: 'dashboard',
+    title: 'Tableau de bord',
+    routeName: 'dashboard',
+    path: '/dashboard',
+  },
   {
     icon: 'mdi-account-multiple',
     title: 'utilisateur',
     routeName: 'utilisateur',
+    path: '/utilisateurs',
   },
   {
     icon: 'quiz',
     title: 'test',
     routeName: 'tests',
+    path: '/tests',
   },
   {
     icon: 'mdi-text-subject',
     title: 'sujet',
     routeName: 'sujets',
+    path: '/sujets',
   },
   {
     icon: 'emoji_events',
     title: 'candidat',
     routeName: 'candidats',
+    path: '/candidats',
   },
   {
     icon: 'present_to_all',
     title: 'entretien',
     routeName: 'entretiens  ',
+    path: '/entretiens',
   },
 ];
+
+const mainLayoutStore = useMainLayoutStore();
 </script>
 
 <style lang="scss">
@@ -119,22 +140,9 @@ const menuItems: Array<SideBarMenu> = [
   box-shadow: 1px 0px 10px rgb(195, 194, 194);
 }
 
-.navbar_app_logo {
-  padding: 0.5rem;
-  height: 5rem;
-  justify-content: center;
-}
-
-.item-menu:hover {
-  color: $primary;
-}
-
-.item-menu {
-  color: $primary-dark;
-}
-
 .nav-bar {
   border-bottom: solid rgb(232, 232, 232) 0.5px;
-  padding: 1rem 3rem;
+  height: 4rem;
+  padding: 0px 2.5rem;
 }
 </style>
