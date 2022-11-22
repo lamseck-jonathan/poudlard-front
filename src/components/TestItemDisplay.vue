@@ -1,8 +1,8 @@
 <template>
   <base-expandable-item
-    @click:show="emit('click:show')"
-    @click:edit="emit('click:edit')"
-    @click:delete="emit('click:delete')"
+    @click:show="emit('click:show', props.test)"
+    @click:edit="emit('click:edit', props.test)"
+    @click:delete="emit('click:delete', props.test)"
     show-action-buttons
   >
     <template #header>
