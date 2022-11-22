@@ -3,22 +3,30 @@
     <custom-datagrid
       row-key="id"
       :columns="columns"
-      :rows="rows"
+      :rows="formattedSujetList"
       :action-btn="false"
       show-search-input
+      use-context-menu
+      @click:context-item="
+        ({ itemMenu, data }) => handleContextMenuClick(itemMenu, data)
+      "
     />
   </q-page>
 </template>
 
 <script lang="ts" setup>
+import { computed, ref } from 'vue';
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
+import { useConfirmationPopup } from 'src/composables/Popup.composable';
 import { fakeSujetList } from 'src/data/sujets.fake';
+import { PopupButton } from 'src/enums/Popup.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
+import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { SujetListing } from 'src/model/Sujet.interface';
 import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { msToTime } from 'src/utils/timeConvertor.util';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
 const mainLayoutStore = useMainLayoutStore();
 
@@ -66,10 +74,10 @@ const columns: DatagridColumns[] = [
   },
 ];
 
-const rows = ref<SujetListing[]>([...formatSujetList()]);
+const sujetList = ref<SujetListing[]>([...fakeSujetList]);
 
-function formatSujetList(): SujetListing[] {
-  return fakeSujetList.map((sujet) => ({
+const formattedSujetList = computed((): SujetListing[] => {
+  return sujetList.value.map((sujet) => ({
     id: sujet.id,
     titre: sujet.titre,
     description: sujet.description,
@@ -78,7 +86,7 @@ function formatSujetList(): SujetListing[] {
     totalPoint: totalPoint(sujet.tests),
     totalDuree: msToTime(totalDuree(sujet.tests)),
   }));
-}
+});
 
 /**
  * @desc calcule la total des durées des tests
@@ -104,5 +112,44 @@ function totalPoint(tests: Test[]) {
   }
 
   return totalPoint;
+}
+
+/**
+ * @desc gestion des clicks sur les menus du contextMenu
+ */
+function handleContextMenuClick(itemMenu: ItemContextMenu, data: SujetListing) {
+  switch (itemMenu.event) {
+    case 'voir':
+      console.log('sujet : ', itemMenu.event, data);
+      break;
+    case 'modifier':
+      console.log('sujet : ', itemMenu.event, data);
+      break;
+    case 'supprimer':
+      deleteSujet(data.id);
+      break;
+    default:
+      break;
+  }
+}
+
+/**
+ * @desc Delete a sujet
+ */
+function deleteSujet(idSujet: string) {
+  const { confirmationPopup } = useConfirmationPopup(
+    'Confirmation',
+    'Voulez vous vraiment supprimer définitivement cette élément de la base ?'
+  );
+
+  confirmationPopup.onOk(({ clicked }) => {
+    if (clicked === PopupButton.YES) {
+      const idx = sujetList.value.findIndex((el) => el.id === idSujet);
+
+      if (idx > -1) {
+        sujetList.value.splice(idx, 1); // delete sujet from array
+      }
+    }
+  });
 }
 </script>
