@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import TestItemDisplay from 'src/components/TestItemDisplay.vue';
-import { TestType } from 'src/enums/TestType.enum';
+import { fakeTestList } from 'src/data/tests.fake';
 import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { stringInclude } from 'src/utils/string.util';
@@ -61,81 +61,5 @@ const filteredTests = computed(() => {
   );
 });
 
-const tests: Test[] = [
-  {
-    id: '1',
-    titre: 'Js Callback',
-    description: 'Decrivez ce que vous entendez par Callback ',
-    categorie: 'JAVASCRIPT',
-    duree: 30000,
-    bareme: 4,
-    type: TestType.QCMM,
-    choix: [
-      {
-        id: 1,
-        reponse: "C'est rien",
-        isTrue: false,
-      },
-      {
-        id: 2,
-        reponse:
-          "C'est une fonction envoyé en paramètre d'une autre fonction puis appeler plus tard dans la fonction mère",
-        isTrue: true,
-      },
-      {
-        id: 3,
-        reponse: "C'est CB",
-        isTrue: false,
-      },
-    ],
-  },
-  {
-    id: '2',
-    titre: 'Js Promise',
-    description: 'Decrivez ce que vous entendez par Promise',
-    categorie: 'JAVASCRIPT',
-    duree: 22000,
-    bareme: 3,
-    type: TestType.QCMU,
-    choix: [
-      {
-        id: 1,
-        reponse: "C'est rien",
-        isTrue: false,
-      },
-      {
-        id: 2,
-        reponse: "C'est un callBack",
-        isTrue: true,
-      },
-      {
-        id: 3,
-        reponse: "C'est une variable utilisé pour gerer les appels asynchrones",
-        isTrue: false,
-      },
-    ],
-  },
-  {
-    id: '3',
-    titre: 'Fonctions et interfaces',
-    description:
-      'Répondez par vrai ou faux. Dans une Interface, on ne déclare que les signatures de ses fonctions ?',
-    categorie: 'POO',
-    duree: 30000,
-    bareme: 5,
-    reponse: 'vrai',
-    type: TestType.QR,
-  },
-  {
-    id: '4',
-    titre: 'Références en PHP',
-    description:
-      "Ecrivez le caractère utilisé pour effectuer une passage par référence d'une variable en PHP.",
-    categorie: 'PHP',
-    duree: 15000,
-    bareme: 3,
-    type: TestType.QR,
-    reponse: '&',
-  },
-];
+const tests: Test[] = [...fakeTestList];
 </script>
