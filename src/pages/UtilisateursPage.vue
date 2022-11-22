@@ -22,7 +22,7 @@ const mainLayoutStore = useMainLayoutStore();
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
-    icon: 'mdi-account-multiple',
+    icon: 'mdi-account-multiple-outline',
     title: 'utilisateur',
     routeName: 'utilisateur',
     path: '/utilisateurs',
