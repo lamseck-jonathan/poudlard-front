@@ -1,31 +1,19 @@
 <template>
-  <q-expansion-item
-    v-model="isExpanded"
-    :expand-icon-class="isExpanded ? 'text-white' : ''"
-    :class="{
-      'test-item-display': true,
-      'bg-blue-grey-5': isExpanded,
-    }"
-    bordered
-    expand-separator
+  <base-expandable-item
+    @click:show="emit('click:show')"
+    @click:edit="emit('click:edit')"
+    @click:delete="emit('click:delete')"
+    show-action-buttons
   >
     <template #header>
-      <div
-        :class="{
-          'row items-center text-weight-bold': true,
-          'text-white': isExpanded,
-        }"
-        style="width: 100%"
-      >
-        <div class="col-4 text-left">{{ props.test.titre }}</div>
-        <div class="col-4 text-center">{{ props.test.categorie }}</div>
-        <div class="col-1 text-center">{{ props.test.type }}</div>
-        <div class="col-1 text-center">{{ props.test.bareme }}</div>
-        <div class="col-2 text-center">{{ msToTime(test.duree) }}</div>
-      </div>
+      <div class="col-4 text-left">{{ props.test.titre }}</div>
+      <div class="col-4 text-center">{{ props.test.categorie }}</div>
+      <div class="col-1 text-center">{{ props.test.type }}</div>
+      <div class="col-1 text-center">{{ props.test.bareme }}</div>
+      <div class="col-2 text-center">{{ msToTime(test.duree) }}</div>
     </template>
 
-    <q-card style="border-radius: 0 0 5px 5px; border-top: 1px solid #ababab">
+    <template #body>
       <q-card-section class="row" style="padding-bottom: 0.5rem">
         <div class="col-3 q-pr-lg">
           <div class="q-mb-sm">
@@ -68,58 +56,19 @@
           </div>
         </div>
       </q-card-section>
-
-      <q-card-section
-        class="flex justify-end q-gutter-x-sm"
-        style="padding-top: 0px; padding-bottom: 0.5rem"
-      >
-        <q-btn
-          round
-          flat
-          class="text-blue-grey-5"
-          icon="mdi-eye-outline"
-          @click="emit('click:show')"
-        />
-        <q-btn
-          round
-          flat
-          class="text-primary"
-          icon="mdi-file-edit-outline"
-          @click="emit('click:edit')"
-        />
-        <q-btn
-          round
-          flat
-          class="text-red"
-          icon="mdi-trash-can-outline"
-          @click="emit('click:delete')"
-        />
-      </q-card-section>
-    </q-card>
-  </q-expansion-item>
+    </template>
+  </base-expandable-item>
 </template>
 
 <script lang="ts" setup>
+import BaseExpandableItem from './BaseExpandableItem.vue';
 import { Test } from 'src/model/Test.interface';
 import { msToTime } from 'src/utils/timeConvertor.util';
-import { PropType, ref } from 'vue';
+import { PropType } from 'vue';
 
 const emit = defineEmits(['click:show', 'click:edit', 'click:delete']);
 
 const props = defineProps({
   test: { type: Object as PropType<Test>, required: true },
 });
-
-const isExpanded = ref<boolean>(false);
 </script>
-
-<style lang="scss">
-.test-item-display {
-  border: 1px solid #ababab;
-  border-radius: 3px;
-}
-
-.test-item-display:hover .q-item {
-  color: $primary;
-}
-</style>
