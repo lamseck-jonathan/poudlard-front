@@ -22,6 +22,7 @@
         v-for="test in filteredTests"
         :test="test"
         :key="test.id"
+        @click:delete="onDeleteTest"
       />
     </q-list>
   </q-page>
@@ -29,7 +30,9 @@
 
 <script lang="ts" setup>
 import TestItemDisplay from 'src/components/TestItemDisplay.vue';
+import { useConfirmationPopup } from 'src/composables/Popup.composable';
 import { fakeTestList } from 'src/data/tests.fake';
+import { PopupButton } from 'src/enums/Popup.enum';
 import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { stringInclude } from 'src/utils/string.util';
@@ -50,7 +53,7 @@ onMounted(() => {
 const searchValue = ref<string>('');
 
 const filteredTests = computed(() => {
-  return tests.filter(
+  return tests.value.filter(
     (el) =>
       stringInclude(el.id, searchValue.value) ||
       stringInclude(el.titre, searchValue.value) ||
@@ -61,5 +64,25 @@ const filteredTests = computed(() => {
   );
 });
 
-const tests: Test[] = [...fakeTestList];
+const tests = ref<Test[]>([...fakeTestList]);
+
+/**
+ * @desc handle on delete test
+ */
+function onDeleteTest(test: Test) {
+  const { confirmationPopup } = useConfirmationPopup(
+    'Confirmation',
+    'Voulez vous vraiment supprimer définitivement cette élément de la base ?'
+  );
+
+  confirmationPopup.onOk(({ clicked }) => {
+    if (clicked === PopupButton.YES) {
+      const idx = tests.value.findIndex((el) => el.id === test.id);
+
+      if (idx > -1) {
+        tests.value.splice(idx, 1); // delete test from array
+      }
+    }
+  });
+}
 </script>
