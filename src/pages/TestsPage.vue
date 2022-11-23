@@ -14,7 +14,13 @@
         </template>
       </q-input>
 
-      <q-btn class="q-px-lg" color="primary" label="ajouter" unelevated />
+      <q-btn
+        class="q-px-lg"
+        color="primary"
+        label="ajouter"
+        @click="() => (showAddModal = true)"
+        unelevated
+      />
     </div>
 
     <q-list class="q-gutter-y-md">
@@ -25,11 +31,17 @@
         @click:delete="onDeleteTest"
       />
     </q-list>
+
+    <base-modal v-model="showAddModal" title="Formulaire test" width="800px">
+      <form-add-test></form-add-test>
+    </base-modal>
   </q-page>
 </template>
 
 <script lang="ts" setup>
+import FormAddTest from 'src/components/FormAddTest.vue';
 import TestItemDisplay from 'src/components/TestItemDisplay.vue';
+import BaseModal from 'src/components/BaseModal.vue';
 import { useConfirmationPopup } from 'src/composables/Popup.composable';
 import { fakeTestList } from 'src/data/tests.fake';
 import { PopupButton } from 'src/enums/Popup.enum';
@@ -85,4 +97,6 @@ function onDeleteTest(test: Test) {
     }
   });
 }
+
+const showAddModal = ref<boolean>(false);
 </script>
