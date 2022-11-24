@@ -84,7 +84,11 @@
     </q-drawer>
 
     <q-page-container class="q-ml-lg q-pr-lg">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
