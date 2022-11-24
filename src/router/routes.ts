@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import authRoutes from 'src/router/auth.routes';
+import interviewRoutes from 'src/router/interview.routes';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -44,6 +45,7 @@ const routes: RouteRecordRaw[] = [
   },
 
   ...authRoutes,
+  ...interviewRoutes,
 
   // Always leave this as last one,
   // but you can also remove it
