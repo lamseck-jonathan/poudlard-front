@@ -18,7 +18,7 @@
         class="q-px-lg"
         color="primary"
         label="ajouter"
-        @click="() => (showAddModal = true)"
+        @click="() => onAddTest()"
         unelevated
       />
     </div>
@@ -28,12 +28,18 @@
         v-for="test in filteredTests"
         :test="test"
         :key="test.id"
+        @click:show="onShowTest"
+        @click:edit="onEditTest"
         @click:delete="onDeleteTest"
       />
     </q-list>
 
     <base-modal v-model="showAddModal" title="Formulaire test" width="800px">
-      <form-add-test></form-add-test>
+      <form-add-test
+        v-model="testModel"
+        :mode="testCrudAction"
+        @submit="onFormSubmit"
+      />
     </base-modal>
   </q-page>
 </template>
@@ -50,6 +56,10 @@ import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { stringInclude } from 'src/utils/string.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { computed, onMounted, ref } from 'vue';
+import { CrudAction } from 'src/enums/CrudAction.enum';
+import getEmptyTestModel from 'src/utils/getEmptyTest.util';
+
+/*-------- MainLayout Store --------*/
 
 const mainLayoutStore = useMainLayoutStore();
 
@@ -61,6 +71,8 @@ onMounted(() => {
     path: '/tests',
   });
 });
+
+/*-------- Search Operation --------*/
 
 const searchValue = ref<string>('');
 
@@ -76,7 +88,66 @@ const filteredTests = computed(() => {
   );
 });
 
+/*-------- Modal Handler --------*/
+const showAddModal = ref<boolean>(false);
+
+function onFormSubmit() {
+  switch (testCrudAction.value) {
+    case CrudAction.CREATE:
+      console.log('CREATE', testModel.value);
+
+      break;
+    case CrudAction.READ:
+      break;
+
+    case CrudAction.UPDATE:
+      console.log('UPTADE', testModel.value);
+      break;
+
+    default:
+      break;
+  }
+}
+/*-------- Test Crud Operation --------*/
+
 const tests = ref<Test[]>([...fakeTestList]);
+const testCrudAction = ref<CrudAction>(CrudAction.CREATE);
+const testModel = ref<Test>(getEmptyTestModel());
+
+/**
+ * @desc handle opening form
+ */
+function openTestForm(mode: CrudAction) {
+  testCrudAction.value = mode;
+  showAddModal.value = true;
+}
+
+/**
+ * @desc handle on add test
+ */
+function onAddTest() {
+  openTestForm(CrudAction.CREATE);
+}
+
+/**
+ * @desc handle on edit test
+ */
+function onEditTest(test: Test) {
+  testModel.value = getEmptyTestModel();
+  openTestForm(CrudAction.UPDATE);
+
+  testModel.value = test;
+}
+
+/**
+ * @desc handle on show test
+ */
+function onShowTest(test: Test) {
+  testModel.value = getEmptyTestModel();
+  openTestForm(CrudAction.READ);
+
+  testModel.value = test;
+}
 
 /**
  * @desc handle on delete test
@@ -97,6 +168,4 @@ function onDeleteTest(test: Test) {
     }
   });
 }
-
-const showAddModal = ref<boolean>(false);
 </script>
