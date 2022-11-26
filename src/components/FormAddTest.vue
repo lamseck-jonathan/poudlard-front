@@ -21,6 +21,7 @@
         v-model="testModel.titre"
         label="Titre"
         :rules="[required]"
+        :readonly="isInReadMode()"
         hide-bottom-space
         outlined
         dense
@@ -33,6 +34,7 @@
           v-model="testModel.categorie"
           label="Catégorie"
           :rules="[required]"
+          :readonly="isInReadMode()"
           hide-bottom-space
           outlined
           dense
@@ -43,6 +45,7 @@
           label="Durée (ms)"
           type="number"
           :rules="[required]"
+          :readonly="isInReadMode()"
           hide-bottom-space
           outlined
           dense
@@ -53,6 +56,7 @@
           type="number"
           label="Point"
           :rules="[required]"
+          :readonly="isInReadMode()"
           hide-bottom-space
           outlined
           dense
@@ -62,6 +66,8 @@
           v-model="testModel.type"
           label="Type"
           :options="testType"
+          :rules="[required]"
+          :readonly="isInReadMode()"
           hide-bottom-space
           outlined
           dense
@@ -74,6 +80,7 @@
         label="Description"
         type="textarea"
         :rules="[required]"
+        :readonly="isInReadMode()"
         hide-bottom-space
         outlined
         dense
@@ -81,12 +88,13 @@
     </div>
 
     <!-- TYPE QR -->
-    <div v-show="testModel.type === TestType.QR" class="row">
+    <div v-if="testModel.type === TestType.QR" class="row">
       <q-input
         class="col-12"
         v-model="testModel.reponse"
         label="Reponse"
         :rules="[required]"
+        :readonly="isInReadMode()"
         hide-bottom-space
         outlined
         dense
@@ -94,8 +102,9 @@
     </div>
 
     <!-- TYPE QCMU -->
-    <div v-show="testModel.type === TestType.QCMU" class="row q-gutter-y-md">
+    <div v-if="testModel.type === TestType.QCMU" class="row q-gutter-y-md">
       <q-btn
+        v-show="!isInReadMode()"
         color="blue-grey-5"
         label="Ajouter une ligne de choix"
         style="width: 100%"
@@ -109,6 +118,7 @@
           v-model="c.reponse"
           label="Réponse"
           :rules="[required]"
+          :readonly="isInReadMode()"
           hide-bottom-space
           outlined
           dense
@@ -120,9 +130,11 @@
           checked-icon="task_alt"
           unchecked-icon="panorama_fish_eye"
           :val="c.id"
+          :disable="isInReadMode()"
         />
 
         <q-btn
+          v-show="!isInReadMode()"
           round
           flat
           class="text-red justify-center"
@@ -133,8 +145,9 @@
     </div>
 
     <!-- TYPE QCMM -->
-    <div v-show="testModel.type === TestType.QCMM" class="row q-gutter-y-md">
+    <div v-if="testModel.type === TestType.QCMM" class="row q-gutter-y-md">
       <q-btn
+        v-show="!isInReadMode()"
         color="blue-grey-5"
         label="Ajouter une ligne de choix"
         style="width: 100%"
@@ -148,14 +161,21 @@
           v-model="c.reponse"
           label="Réponse"
           :rules="[required]"
+          :readonly="isInReadMode()"
           hide-bottom-space
           outlined
           dense
         />
 
-        <q-checkbox class="col-1 justify-center" v-model="c.isTrue" dense />
+        <q-checkbox
+          class="col-1 justify-center"
+          v-model="c.isTrue"
+          :disable="isInReadMode()"
+          dense
+        />
 
         <q-btn
+          v-show="isInReadMode()"
           round
           flat
           class="text-red justify-center"
@@ -166,33 +186,95 @@
     </div>
 
     <q-btn
+      v-show="!isInReadMode()"
       class="row"
       type="submit"
       color="blue-grey-7"
       label="Ajouter"
       style="width: 98%"
-    ></q-btn>
+    />
   </q-form>
 </template>
 
 <script lang="ts" setup>
 import { TestType } from 'src/enums/TestType.enum';
 import { Test } from 'src/model/Test.interface';
-import { ref } from 'vue';
+import { onMounted, PropType, ref, watch } from 'vue';
 import { required } from 'src/utils/validationRules.util';
+import { CrudAction } from 'src/enums/CrudAction.enum';
+import getEmptyTestModel from 'src/utils/getEmptyTest.util';
 
 const testModel = ref<Test>(getEmptyTestModel());
 const testType: TestType[] = [TestType.QCMM, TestType.QCMU, TestType.QR];
 const trueResponseId = ref<number>();
 
-function onSubmit() {
-  console.log('on test submit');
+const emit = defineEmits(['update:modelValue', 'submit']);
+const props = defineProps({
+  modelValue: {
+    type: Object as PropType<Test>,
+    required: true,
+  },
+  mode: {
+    type: String as PropType<CrudAction>,
+    required: true,
+  },
+});
+
+onMounted(() => {
+  affectTestModel();
+});
+
+// custom v-model
+watch(
+  () => props.modelValue,
+  () => (testModel.value = props.modelValue),
+  { deep: true }
+);
+
+watch(
+  () => testModel.value,
+  () => emit('update:modelValue', testModel.value),
+  { deep: true }
+);
+
+/**
+ *@esc affectation opération
+ */
+function affectTestModel() {
+  testModel.value = props.modelValue;
+
+  if (testModel.value.type === TestType.QCMU) {
+    testModel.value.choix?.forEach((c) => {
+      if (c.isTrue) trueResponseId.value = c.id;
+    });
+  }
 }
 
+/**
+ * @desc handle on submit
+ */
+function onSubmit() {
+  // add QCMU choix value
+  if (testModel.value.type === TestType.QCMU) {
+    testModel.value.choix?.forEach((c) => {
+      c.isTrue = false;
+      if (c.id === trueResponseId.value) c.isTrue = true;
+    });
+  }
+
+  emit('submit', testModel);
+}
+
+/**
+ * @desc handle on validation are not all passed
+ */
 function displayInvalidFormError() {
   console.log('invalid form Error');
 }
 
+/**
+ * @desc handle add New choix
+ */
 function addNewChoix() {
   const choiceLength = testModel.value.choix?.length || 0;
 
@@ -205,31 +287,6 @@ function addNewChoix() {
   }
 }
 
-function getEmptyTestModel() {
-  return {
-    id: '',
-    titre: '',
-    description: '',
-    categorie: '',
-    duree: 0,
-    bareme: 0,
-    choix: [
-      {
-        id: 1,
-        reponse: '',
-        isTrue: false,
-      },
-      {
-        id: 2,
-        reponse: '',
-        isTrue: false,
-      },
-    ],
-    reponse: '',
-    type: TestType.QCMU,
-  };
-}
-
 function deleteTestChoix(id: number) {
   if (testModel.value.choix && testModel.value.choix.length > 2) {
     const idx = testModel.value.choix.findIndex((el) => el.id === id);
@@ -238,6 +295,12 @@ function deleteTestChoix(id: number) {
       testModel.value.choix?.splice(idx, 1);
     }
   }
+}
+/**
+ * @desc mode status
+ */
+function isInReadMode(): boolean {
+  return props.mode === CrudAction.READ;
 }
 </script>
 
