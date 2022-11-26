@@ -469,7 +469,7 @@ export const fakeBackendTestList = [
       {
         id: 2,
         reponse: 'Ligne',
-        isTrue: false,
+        isTrue: true,
       },
       {
         id: 3,
@@ -479,7 +479,7 @@ export const fakeBackendTestList = [
       {
         id: 4,
         reponse: 'Objet',
-        isTrue: true,
+        isTrue: false,
       },
     ],
   },
