@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        redirect: 'login',
+        redirect: '/auth/login',
       },
       {
         path: 'login',
