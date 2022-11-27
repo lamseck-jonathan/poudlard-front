@@ -34,8 +34,8 @@
       />
     </q-list>
 
-    <base-modal v-model="showAddModal" title="Formulaire test" width="800px">
-      <form-add-test
+    <base-modal v-model="showTestModal" title="Formulaire test" width="800px">
+      <form-test
         v-model="testModel"
         :mode="testCrudAction"
         @submit="onFormSubmit"
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import FormAddTest from 'src/components/FormAddTest.vue';
+import FormTest from 'src/components/FormTest.vue';
 import TestItemDisplay from 'src/components/TestItemDisplay.vue';
 import BaseModal from 'src/components/BaseModal.vue';
 import { useConfirmationPopup } from 'src/composables/Popup.composable';
@@ -89,24 +89,10 @@ const filteredTests = computed(() => {
 });
 
 /*-------- Modal Handler --------*/
-const showAddModal = ref<boolean>(false);
+const showTestModal = ref<boolean>(false);
 
-function onFormSubmit() {
-  switch (testCrudAction.value) {
-    case CrudAction.CREATE:
-      console.log('CREATE', testModel.value);
-
-      break;
-    case CrudAction.READ:
-      break;
-
-    case CrudAction.UPDATE:
-      console.log('UPTADE', testModel.value);
-      break;
-
-    default:
-      break;
-  }
+function closeModal() {
+  showTestModal.value = false;
 }
 /*-------- Test Crud Operation --------*/
 
@@ -118,8 +104,9 @@ const testModel = ref<Test>(getEmptyTestModel());
  * @desc handle opening form
  */
 function openTestForm(mode: CrudAction) {
+  testModel.value = getEmptyTestModel();
   testCrudAction.value = mode;
-  showAddModal.value = true;
+  showTestModal.value = true;
 }
 
 /**
@@ -133,9 +120,7 @@ function onAddTest() {
  * @desc handle on edit test
  */
 function onEditTest(test: Test) {
-  testModel.value = getEmptyTestModel();
   openTestForm(CrudAction.UPDATE);
-
   testModel.value = test;
 }
 
@@ -143,10 +128,29 @@ function onEditTest(test: Test) {
  * @desc handle on show test
  */
 function onShowTest(test: Test) {
-  testModel.value = getEmptyTestModel();
   openTestForm(CrudAction.READ);
-
   testModel.value = test;
+}
+
+/**
+ * @desc handling on form submit event
+ */
+function onFormSubmit() {
+  switch (testCrudAction.value) {
+    case CrudAction.CREATE:
+      tests.value.push(testModel.value);
+      closeModal();
+      break;
+
+    case CrudAction.UPDATE:
+      const idx = tests.value.findIndex((el) => el.id === testModel.value.id);
+      tests.value[idx] = testModel.value;
+      closeModal();
+      break;
+
+    default:
+      break;
+  }
 }
 
 /**
