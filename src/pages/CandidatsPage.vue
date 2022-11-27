@@ -5,6 +5,11 @@
       :columns="columns"
       :rows="rows"
       :action-btn="false"
+      :context-menu-items="menuItems"
+      @click:context-item="
+        ({ itemMenu, data }) => onContextMenuClick(itemMenu, data)
+      "
+      use-context-menu
       show-search-input
     />
   </q-page>
@@ -12,22 +17,76 @@
 
 <script lang="ts" setup>
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
+import { CrudAction } from 'src/enums/CrudAction.enum';
 import { Role } from 'src/enums/Role.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
+import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { UserListing } from 'src/model/User.interface';
+import { useFicheCandidatStore } from 'src/stores/fiche-candidat-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+/*--------------- Managing Store -------------*/
 const mainLayoutStore = useMainLayoutStore();
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
-    icon: 'quiz',
-    title: 'test',
-    routeName: 'test',
-    path: '/tests',
+    icon: 'emoji_events',
+    title: 'candidat',
+    routeName: 'candidats',
+    path: '/candidats',
   });
 });
+
+onBeforeMount(() => {
+  ficheCandidatStore.getAllFicheCandidats();
+});
+
+/*--------------- Crud operation -------------*/
+const router = useRouter();
+const ficheCandidatStore = useFicheCandidatStore();
+
+function onContextMenuClick(itemMenu: ItemContextMenu, data: UserListing) {
+  ficheCandidatStore.selectedCandidat = data;
+
+  switch (itemMenu.event) {
+    case CrudAction.READ:
+      ficheCandidatStore.crudAction = CrudAction.READ;
+      router.push({ name: 'fiche-candidat' });
+      break;
+
+    case CrudAction.UPDATE:
+      ficheCandidatStore.crudAction = CrudAction.UPDATE;
+      router.push({ name: 'fiche-candidat' });
+      break;
+
+    default:
+      break;
+  }
+}
+
+/*--------------- Listing operation -------------*/
+const menuItems: ItemContextMenu[] = [
+  {
+    label: 'Voir',
+    event: CrudAction.READ,
+    appendIcon: 'mdi-eye-outline',
+    isDisabled: false,
+  },
+  {
+    label: 'Mettre à jour',
+    event: CrudAction.UPDATE,
+    appendIcon: 'mdi-file-edit-outline',
+    isDisabled: false,
+  },
+  {
+    label: 'Vider la fiche',
+    event: CrudAction.DELETE,
+    appendIcon: 'mdi-trash-can-outline',
+    isDisabled: false,
+  },
+];
 
 const columns: DatagridColumns[] = [
   {
