@@ -1,6 +1,7 @@
 import { TestType } from 'src/enums/TestType.enum';
+import { Test } from 'src/model/Test.interface';
 
-export const fakeTestList = [
+export const fakeTestList = <Test[]>[
   {
     id: '1',
     titre: 'Js Callback',

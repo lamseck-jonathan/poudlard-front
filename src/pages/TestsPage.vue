@@ -28,6 +28,7 @@
         v-for="test in filteredTests"
         :test="test"
         :key="test.id"
+        @click:show="onShowTest"
         @click:delete="onDeleteTest"
       />
     </q-list>
@@ -43,17 +44,21 @@ import FormAddTest from 'src/components/FormAddTest.vue';
 import TestItemDisplay from 'src/components/TestItemDisplay.vue';
 import BaseModal from 'src/components/BaseModal.vue';
 import { useConfirmationPopup } from 'src/composables/Popup.composable';
-import { fakeTestList } from 'src/data/tests.fake';
+//import { fakeTestList } from 'src/data/tests.fake';
 import { PopupButton } from 'src/enums/Popup.enum';
 import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { stringInclude } from 'src/utils/string.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { computed, onMounted, ref } from 'vue';
+import { useTestStore } from 'src/stores/test-store';
+import { doc, getDoc, getFirestore } from 'firebase/firestore/lite';
+import { firebaseApp } from 'src/firebase';
 
 const mainLayoutStore = useMainLayoutStore();
+const testStore = useTestStore();
 
-onMounted(() => {
+onMounted(async () => {
   mainLayoutStore.setNavBarpageInfo({
     icon: 'quiz',
     title: 'test',
@@ -61,6 +66,7 @@ onMounted(() => {
     path: '/tests',
   });
 });
+const db = getFirestore(firebaseApp);
 
 const searchValue = ref<string>('');
 
@@ -76,7 +82,11 @@ const filteredTests = computed(() => {
   );
 });
 
-const tests = ref<Test[]>([...fakeTestList]);
+testStore.fetchTestList();
+
+const tests = computed(() => {
+  return testStore.tests;
+});
 
 /**
  * @desc handle on delete test
@@ -96,6 +106,14 @@ function onDeleteTest(test: Test) {
       }
     }
   });
+}
+
+async function onShowTest(test: Test) {
+  console.log(test);
+  const docRef = doc(db, 'test', test.id);
+  const docSnap = await getDoc(docRef);
+  const showTest: Test = docSnap.data() as Test;
+  console.log(showTest);
 }
 
 const showAddModal = ref<boolean>(false);

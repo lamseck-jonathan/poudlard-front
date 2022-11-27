@@ -105,6 +105,7 @@ import { TypeTest } from 'src/model/Test.interface';
 import ReponseInput from './ReponseInput.vue';
 import QcuInput from './QcuInput.vue';
 import { Reponse } from 'src/model/Reponse.interface';
+import { TestType } from 'src/enums/TestType.enum';
 
 const emit = defineEmits(['submitted']);
 
@@ -118,7 +119,7 @@ const test = reactive<Test>({
   bareme: 0,
   choix: [],
   reponse: '',
-  type: {} as TypeTest,
+  type: {} as TestType,
 });
 const listeTypeTest = ref<TypeTest[]>([
   {

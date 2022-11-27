@@ -81,7 +81,7 @@
     </div>
 
     <!-- TYPE QR -->
-    <div v-show="testModel.type === TestType.QR" class="row">
+    <div v-if="testModel.type === TestType.QR" class="row">
       <q-input
         class="col-12"
         v-model="testModel.reponse"
@@ -94,7 +94,7 @@
     </div>
 
     <!-- TYPE QCMU -->
-    <div v-show="testModel.type === TestType.QCMU" class="row q-gutter-y-md">
+    <div v-if="testModel.type === TestType.QCMU" class="row q-gutter-y-md">
       <q-btn
         color="blue-grey-5"
         label="Ajouter une ligne de choix"
@@ -133,7 +133,7 @@
     </div>
 
     <!-- TYPE QCMM -->
-    <div v-show="testModel.type === TestType.QCMM" class="row q-gutter-y-md">
+    <div v-if="testModel.type === TestType.QCMM" class="row q-gutter-y-md">
       <q-btn
         color="blue-grey-5"
         label="Ajouter une ligne de choix"
@@ -180,13 +180,33 @@ import { TestType } from 'src/enums/TestType.enum';
 import { Test } from 'src/model/Test.interface';
 import { ref } from 'vue';
 import { required } from 'src/utils/validationRules.util';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  updateDoc,
+} from 'firebase/firestore/lite';
+import { firebaseApp } from 'src/firebase';
+import { useTestStore } from 'src/stores/test-store';
 
+const testStore = useTestStore();
 const testModel = ref<Test>(getEmptyTestModel());
 const testType: TestType[] = [TestType.QCMM, TestType.QCMU, TestType.QR];
 const trueResponseId = ref<number>();
+const db = getFirestore(firebaseApp);
 
-function onSubmit() {
-  console.log('on test submit');
+async function onSubmit() {
+  const addResult = await addDoc(collection(db, 'test'), testModel.value);
+  const docRef = doc(db, 'test', addResult.id);
+  await updateDoc(docRef, {
+    id: addResult.id,
+  });
+  const docSnap = await getDoc(docRef);
+  const newTest: Test = docSnap.data() as Test;
+  testStore.tests.push(newTest);
+  console.log(testStore.tests);
 }
 
 function displayInvalidFormError() {

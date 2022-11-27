@@ -20,6 +20,7 @@
 import FormAjoutTest from 'src/components/Form/FormAjoutTest.vue';
 import ItemTest from 'src/components/ItemTest.vue';
 import FormModal from 'src/components/Modal/FormModal.vue';
+import { TestType } from 'src/enums/TestType.enum';
 import { Test } from 'src/model/Test.interface';
 import { ref } from 'vue';
 
@@ -32,11 +33,7 @@ const tests = ref<Test[]>([
     categorie: 'QCMM',
     duree: 30000,
     bareme: 4,
-    type: {
-      id: 1,
-      type_test: 'QCM',
-      label: 'Question Choix Multiple',
-    },
+    type: TestType.QCMU,
     choix: [
       {
         id: 1,
@@ -59,14 +56,10 @@ const tests = ref<Test[]>([
     id: '2',
     titre: 'Js Promise',
     description: 'Decrivez ce que vous entendez par Promise',
-    categorie: 'QCMM',
+    categorie: 'HTML',
     duree: 30000,
     bareme: 4,
-    type: {
-      id: 1,
-      type_test: 'QCM',
-      label: 'Question Choix Multiple',
-    },
+    type: TestType.QCMM,
     choix: [
       {
         id: 1,
