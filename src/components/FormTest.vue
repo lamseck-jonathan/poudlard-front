@@ -1,6 +1,6 @@
 <template>
   <q-form
-    class="q-gutter-md"
+    class="q-gutter-md form-test"
     @submit="onSubmit"
     @validationError="displayInvalidFormError"
     greedy
@@ -305,7 +305,9 @@ function isInReadMode(): boolean {
 </script>
 
 <style lang="scss">
-.description-textarea textarea {
-  height: 12rem;
+.form-test {
+  .description-textarea textarea {
+    height: 12rem;
+  }
 }
 </style>
