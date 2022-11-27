@@ -13,7 +13,7 @@ export const useMainLayoutStore = defineStore('mainLayout', {
       sortBy: 'desc',
       descending: false,
       page: 1,
-      rowsPerPage: 10,
+      rowsPerPage: 5,
     },
   }),
 
