@@ -178,6 +178,7 @@ import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { computed, PropType, ref } from 'vue';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
+import { CrudAction } from 'src/enums/CrudAction.enum';
 
 const mainLayoutStore = useMainLayoutStore();
 
@@ -258,19 +259,19 @@ const props = defineProps({
     default: () => [
       {
         label: 'Voir',
-        event: 'voir',
+        event: CrudAction.READ,
         appendIcon: 'mdi-eye-outline',
         isDisabled: false,
       },
       {
         label: 'Modifier',
-        event: 'modifier',
+        event: CrudAction.UPDATE,
         appendIcon: 'mdi-file-edit-outline',
         isDisabled: false,
       },
       {
         label: 'Supprimer',
-        event: 'supprimer',
+        event: CrudAction.DELETE,
         appendIcon: 'mdi-trash-can-outline',
         isDisabled: false,
       },
