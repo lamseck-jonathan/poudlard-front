@@ -70,6 +70,7 @@
       <q-item
         class="text-blue__dark item-menu fixed-bottom q-mb-sm"
         active-class="text-primary"
+        :to="'auth/login'"
         clickable
       >
         <q-item-section avatar>
@@ -83,7 +84,11 @@
     </q-drawer>
 
     <q-page-container class="q-ml-lg q-pr-lg">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -100,7 +105,7 @@ const menuItems: SideBarMenu[] = [
     path: '/dashboard',
   },
   {
-    icon: 'mdi-account-multiple',
+    icon: 'mdi-account-multiple-outline',
     title: 'utilisateur',
     routeName: 'utilisateur',
     path: '/utilisateurs',

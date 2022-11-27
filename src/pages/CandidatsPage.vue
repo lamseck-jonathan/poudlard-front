@@ -12,20 +12,20 @@
 
 <script lang="ts" setup>
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
+import { Role } from 'src/enums/Role.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
+import { UserListing } from 'src/model/User.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { onMounted, ref } from 'vue';
-import { UserListing } from 'src/model/User.interface';
-import { fakeUtilisateursList } from 'src/data/utilisateurs.fake';
 
 const mainLayoutStore = useMainLayoutStore();
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
-    icon: 'mdi-account-multiple-outline',
-    title: 'utilisateur',
-    routeName: 'utilisateur',
-    path: '/utilisateurs',
+    icon: 'quiz',
+    title: 'test',
+    routeName: 'test',
+    path: '/tests',
   });
 });
 
@@ -88,5 +88,26 @@ const columns: DatagridColumns[] = [
   },
 ];
 
-const rows = ref<UserListing[]>([...fakeUtilisateursList]);
+const rows = ref<UserListing[]>([
+  {
+    id: '3',
+    nom: 'JEAN MARC',
+    prenom: 'Leon',
+    role: Role.CANDIDAT,
+    adresse: 'Andrefanambohijanahary Antananarivo',
+    email: 'leon@email.com',
+    telephone: '0344745682',
+    actif: true,
+  },
+  {
+    id: '4',
+    nom: 'Doe',
+    prenom: 'John',
+    role: Role.CANDIDAT,
+    adresse: 'Chartre France',
+    email: 'john@email.com',
+    telephone: '+334563218654',
+    actif: false,
+  },
+]);
 </script>

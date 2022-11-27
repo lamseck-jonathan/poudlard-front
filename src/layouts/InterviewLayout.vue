@@ -1,26 +1,14 @@
 <template>
   <q-layout view="hHh lpR fFf" class="bg-light">
-    <q-header style="background: transparent">
-      <q-tabs
-        dense
-        inline-label
-        class="text-primary shadow-2 q-px-lg"
-        :align="'left'"
-        style="box-shadow: none"
-      >
-        <q-tab
-          name="mails"
-          label="Connexion"
-          :ripple="false"
-          @click.prevent="goTo('login')"
-        />
-        <q-tab
-          name="alarms"
-          label="Inscription"
-          :ripple="false"
-          @click.prevent="goTo('signIn')"
-        />
-      </q-tabs>
+    <q-header reveal elevated class="bg-primary text-white">
+      <q-toolbar>
+        <q-toolbar-title>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+          </q-avatar>
+          Title
+        </q-toolbar-title>
+      </q-toolbar>
     </q-header>
 
     <!-- content area -->

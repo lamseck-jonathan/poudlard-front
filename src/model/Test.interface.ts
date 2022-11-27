@@ -1,3 +1,5 @@
+import { TestType } from 'src/enums/TestType.enum';
+
 import { Reponse } from './Reponse.interface';
 
 export interface Test {
@@ -9,7 +11,7 @@ export interface Test {
   bareme: number;
   choix?: Reponse[];
   reponse?: string;
-  type: TypeTest;
+  type: TestType;
 }
 
 /** JUST FOR INFORMATION */
@@ -17,12 +19,8 @@ export const test: Test = {
   id: 'xlijseoijflkjzeflnn1',
   titre: 'Tag pour aller à la ligne',
   description: 'ma description',
-  categorie: 'QCMU',
-  type: {
-    id: 1,
-    type_test: 'QCM',
-    label: 'Question Choix Multiple',
-  },
+  categorie: 'HTML',
+  type: TestType.QCMU,
   duree: 30000,
   bareme: 4,
   choix: [

@@ -19,7 +19,7 @@
 
       <q-btn
         round
-        :color="isCompactMode ? 'blue-grey' : 'primary'"
+        :color="isCompactMode ? 'blue-grey-14' : 'blue-grey-5'"
         size="sm"
         icon="vertical_align_center"
         @click="isCompactMode = !isCompactMode"
@@ -61,7 +61,7 @@
 
     <!-- table header customization -->
     <template v-slot:header="props">
-      <q-tr :props="props" class="bg-blue-grey-14 text-white">
+      <q-tr :props="props" class="bg-blue-grey-5 text-white">
         <q-th
           v-for="col in props.cols"
           :key="col.name"
@@ -85,6 +85,15 @@
           :props="props"
           :style="styleObject"
         >
+          <base-context-menu
+            v-if="useContextMenu"
+            :items="contextMenuItems"
+            @click:item="
+              (itemMenu) =>
+                emit('click:contextItem', { itemMenu, data: props.row })
+            "
+          />
+
           <span :id="props.row?.templateId">
             <template v-if="typeof props.row[column.name] === 'boolean'">
               <q-badge
@@ -148,9 +157,10 @@
         :max-pages="4"
         icon-first="keyboard_double_arrow_left"
         icon-last="keyboard_double_arrow_right"
-        active-color="primary"
+        active-color="blue-grey-7"
         direction-links
         boundary-links
+        color="blue-grey-5"
       />
     </template>
 
@@ -163,13 +173,15 @@
 </template>
 
 <script lang="ts" setup>
+import BaseContextMenu from './BaseContextMenu.vue';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { computed, PropType, ref } from 'vue';
+import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 
 const mainLayoutStore = useMainLayoutStore();
 
-const emit = defineEmits(['click:add', 'click:delete']);
+const emit = defineEmits(['click:add', 'click:delete', 'click:contextItem']);
 
 const filter = ref<string>('');
 const isCompactMode = ref<boolean>(false);
@@ -236,6 +248,33 @@ const props = defineProps({
   deleteBtnColumnLabel: {
     type: String,
     required: false,
+  },
+  useContextMenu: {
+    type: Boolean,
+    default: false,
+  },
+  contextMenuItems: {
+    type: Array as PropType<ItemContextMenu[]>,
+    default: () => [
+      {
+        label: 'Voir',
+        event: 'voir',
+        appendIcon: 'mdi-eye-outline',
+        isDisabled: false,
+      },
+      {
+        label: 'Modifier',
+        event: 'modifier',
+        appendIcon: 'mdi-file-edit-outline',
+        isDisabled: false,
+      },
+      {
+        label: 'Supprimer',
+        event: 'supprimer',
+        appendIcon: 'mdi-trash-can-outline',
+        isDisabled: false,
+      },
+    ],
   },
 });
 
