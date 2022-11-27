@@ -1,6 +1,6 @@
+import { Diplome } from 'src/enums/Diplome.enum';
 import { Niveau } from 'src/enums/Niveau.enum';
 import { SituationActuelle } from 'src/enums/SituationActuelle.enum';
-import { Diplome } from './Diplome.interface';
 import { User } from './User.interface';
 
 export interface FicheCandidat extends User {
