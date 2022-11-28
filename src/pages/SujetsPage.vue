@@ -28,7 +28,6 @@ import BaseModal from 'src/components/BaseModal.vue';
 import FormSujet from '../components/FormSujet.vue';
 import { computed, ref } from 'vue';
 import { useConfirmationPopup } from 'src/composables/Popup.composable';
-import { fakeSujetList } from 'src/data/sujets.fake';
 import { PopupButton } from 'src/enums/Popup.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';

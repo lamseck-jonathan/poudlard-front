@@ -278,6 +278,7 @@ function onSubmit() {
     competence2.value,
     competence3.value,
   ];
+  console.log(ficheCandidatStore.formFicheCandidat);
   ficheCandidatStore.updateFicheCandidat();
 }
 

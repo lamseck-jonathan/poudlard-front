@@ -3,7 +3,7 @@
     <custom-datagrid
       row-key="id"
       :columns="columns"
-      :rows="rows"
+      :rows="users"
       :action-btn="false"
       :context-menu-items="contextMenuItems"
       @click:context-item="
@@ -21,6 +21,7 @@
       <form-utilisateur
         v-model="utilisateurModel"
         :mode="utilisateurCrudAction"
+        @submit="onFormSubmit"
       />
     </base-modal>
   </q-page>
@@ -32,12 +33,16 @@ import BaseModal from 'src/components/BaseModal.vue';
 import FormUtilisateur from 'src/components/FormUtilisateur.vue';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { User, UserListing } from 'src/model/User.interface';
-import { fakeUtilisateursList } from 'src/data/utilisateurs.fake';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
+import { useUserStore } from 'src/stores/user-store';
+import { doc, getFirestore, updateDoc } from 'firebase/firestore/lite';
+import { firebaseApp } from 'src/firebase';
 
+const userStore = useUserStore();
+const db = getFirestore(firebaseApp);
 /*-------- MainLayout Store --------*/
 const mainLayoutStore = useMainLayoutStore();
 
@@ -150,5 +155,35 @@ const columns: DatagridColumns[] = [
   },
 ];
 
-const rows = ref<UserListing[]>([...fakeUtilisateursList]);
+userStore.fetchUserList();
+const users = computed<UserListing[]>(() => {
+  return userStore.users as UserListing[];
+});
+
+function closeModal() {
+  showUtilisateurModal.value = false;
+}
+
+async function updateUtilisateur(user: UserListing) {
+  const docRef = doc(db, 'user', user.id);
+  await updateDoc(docRef, {
+    id: user.id,
+    nom: user.nom,
+    prenom: user.prenom,
+    email: user.email,
+    role: user.role,
+    telephone: user.telephone,
+    adresse: user.adresse,
+    actif: user.actif,
+  });
+}
+
+/**
+ * @desc handling on form submit event
+ */
+function onFormSubmit() {
+  console.log('onFormSubmit', utilisateurModel.value);
+  updateUtilisateur(utilisateurModel.value);
+  closeModal();
+}
 </script>

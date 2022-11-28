@@ -156,7 +156,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
-import { User, UserSignIn } from 'src/model/User.interface';
+import { UserSignIn } from 'src/model/User.interface';
+import { Role } from 'src/enums/Role.enum';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import {
   addDoc,
@@ -201,6 +202,7 @@ function onSubmit() {
   createUserWithEmailAndPassword(auth, userSingIn.email, userSingIn.mdp).then(
     (userCredential) => {
       const user = userCredential.user;
+      userSingIn.role = Role.CANDIDAT;
       addUtilisateur(userCredential.user.uid, userSingIn);
       console.log(user);
     }

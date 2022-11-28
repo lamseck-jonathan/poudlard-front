@@ -98,6 +98,7 @@
 </template>
 
 <script lang="ts" setup>
+import { emit } from 'process';
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import EntretienDisplayCandidatItem from 'src/components/EntretienDisplayCandidatItem.vue';
 import EntretienDisplaySujetItem from 'src/components/EntretienDisplaySujetItem.vue';
@@ -107,15 +108,18 @@ import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
 import { Role } from 'src/enums/Role.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Sujet, SujetListing } from 'src/model/Sujet.interface';
-import { User } from 'src/model/User.interface';
+import { User, UserListing } from 'src/model/User.interface';
 import { useEntretienStore } from 'src/stores/entretien-store';
+import { useUserStore } from 'src/stores/user-store';
 import { totalDuree, totalPoint } from 'src/utils/sujet.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { required } from 'src/utils/validationRules.util';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
+const emit = defineEmits(['submit']);
 const entretienStore = useEntretienStore();
+const userStore = useUserStore();
 const entretienStatutOptions: EntretienStatut[] = [
   EntretienStatut.EN_COURS,
   EntretienStatut.ANNULE,
@@ -151,9 +155,11 @@ const candidatColumns: DatagridColumns[] = [
 
 /*---------------- Candidat ----------------*/
 
+userStore.fetchCandidatList();
+console.log(userStore.users);
 const candidatRows = computed(() => {
-  const allCandidats = [...fakeUtilisateursList].filter((user) => {
-    return user.actif && user.role === Role.CANDIDAT;
+  const allCandidats = userStore.users.filter((user) => {
+    return user.actif;
   });
 
   return allCandidats;
@@ -225,6 +231,7 @@ function onAnnuler() {
 }
 
 function onSubmit() {
+  emit('submit');
   console.log('submit', entretienStore.FormEntretien);
 }
 

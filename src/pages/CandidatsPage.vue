@@ -3,7 +3,7 @@
     <custom-datagrid
       row-key="id"
       :columns="columns"
-      :rows="rows"
+      :rows="users"
       :action-btn="false"
       :context-menu-items="menuItems"
       @click:context-item="
@@ -18,18 +18,18 @@
 <script lang="ts" setup>
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import { CrudAction } from 'src/enums/CrudAction.enum';
-import { Role } from 'src/enums/Role.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { UserListing } from 'src/model/User.interface';
 import { useFicheCandidatStore } from 'src/stores/fiche-candidat-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { useUserStore } from 'src/stores/user-store';
+import { computed, onBeforeMount, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 /*--------------- Managing Store -------------*/
 const mainLayoutStore = useMainLayoutStore();
-
+const userStore = useUserStore();
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
     icon: 'emoji_events',
@@ -147,26 +147,8 @@ const columns: DatagridColumns[] = [
   },
 ];
 
-const rows = ref<UserListing[]>([
-  {
-    id: '3',
-    nom: 'JEAN MARC',
-    prenom: 'Leon',
-    role: Role.CANDIDAT,
-    adresse: 'Andrefanambohijanahary Antananarivo',
-    email: 'leon@email.com',
-    telephone: '0344745682',
-    actif: true,
-  },
-  {
-    id: '4',
-    nom: 'Doe',
-    prenom: 'John',
-    role: Role.CANDIDAT,
-    adresse: 'Chartre France',
-    email: 'john@email.com',
-    telephone: '+334563218654',
-    actif: false,
-  },
-]);
+userStore.fetchCandidatList();
+const users = computed<UserListing[]>(() => {
+  return userStore.users as UserListing[];
+});
 </script>

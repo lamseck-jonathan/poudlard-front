@@ -93,7 +93,7 @@ import { User } from 'src/model/User.interface';
 import { PropType, computed } from 'vue';
 import { required } from 'src/utils/validationRules.util';
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'submit']);
 const props = defineProps({
   modelValue: {
     type: Object as PropType<User>,
@@ -121,7 +121,14 @@ function isInReadMode() {
 }
 
 function onSubmit() {
-  console.log('submit', utilisateurModel.value);
+  if (utilisateurModel.value.actif != true) {
+    utilisateurModel.value.actif = false;
+    emit('submit', utilisateurModel.value);
+    console.log('submit', utilisateurModel.value);
+  } else {
+    emit('submit', utilisateurModel.value);
+    console.log('submit', utilisateurModel.value);
+  }
 }
 
 function displayInvalidFormError() {

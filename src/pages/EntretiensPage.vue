@@ -23,7 +23,7 @@ import { Entretien } from 'src/model/Entretien.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { useEntretienStore } from 'src/stores/entretien-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const entretienStore = useEntretienStore();
@@ -95,5 +95,9 @@ const columns: DatagridColumns[] = [
     sortable: true,
   },
 ];
-const rows: Entretien[] = [...fakeEntretiensList];
+
+entretienStore.fetchEntretienList();
+const rows = computed<Entretien[]>(() => {
+  return entretienStore.entretiens as Entretien[];
+});
 </script>

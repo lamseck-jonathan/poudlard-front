@@ -131,7 +131,15 @@ async function addTest(testItem: Test) {
 async function updateTest(testItem: Test) {
   const docRef = doc(db, 'test', testItem.id);
   await updateDoc(docRef, {
-    testItem,
+    id: testItem.id,
+    titre: testItem.titre,
+    description: testItem.description,
+    categorie: testItem.categorie,
+    duree: testItem.duree,
+    bareme: testItem.bareme,
+    choix: testItem.choix,
+    reponse: testItem.reponse,
+    type: testItem.type,
   });
 }
 
