@@ -13,6 +13,12 @@ export interface Entretien {
   reponseCandidat?: ReponseCandidat[];
 }
 
+export interface ResultatListing {
+  candidat: User;
+  date: string;
+  statut: EntretienStatut;
+}
+
 export interface FormEntretien {
   id: string;
   date: string;
