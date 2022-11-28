@@ -156,10 +156,20 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
-import { UserSignIn } from 'src/model/User.interface';
+import { User, UserSignIn } from 'src/model/User.interface';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  updateDoc,
+} from 'firebase/firestore/lite';
+import { firebaseApp } from 'src/firebase';
 
 const authIsLoading = ref<boolean>(false);
 const isPwd = ref<boolean>(true); // for password field
+const db = getFirestore(firebaseApp);
 
 const userSingIn = reactive<UserSignIn>({
   nom: '',
@@ -176,8 +186,25 @@ const isPwdMatch = () =>
   userSingIn.mdp === userSingIn.mdpVerif ||
   'Les mots de passent ne se correspondent pas';
 
+async function addUtilisateur(id: string, user: UserSignIn) {
+  const addResult = await addDoc(collection(db, 'user'), user);
+  const docRef = doc(db, 'user', addResult.id);
+  await updateDoc(docRef, {
+    id: addResult.id,
+    uid: id,
+  });
+}
+
 function onSubmit() {
   authIsLoading.value = true;
+  const auth = getAuth();
+  createUserWithEmailAndPassword(auth, userSingIn.email, userSingIn.mdp).then(
+    (userCredential) => {
+      const user = userCredential.user;
+      addUtilisateur(userCredential.user.uid, userSingIn);
+      console.log(user);
+    }
+  );
   setTimeout(() => {
     authIsLoading.value = false;
   }, 2000);

@@ -72,6 +72,7 @@
 import { UserLogin } from 'src/model/User.interface';
 import { reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const authIsLoading = ref<boolean>(false);
 const isPwd = ref<boolean>(true); // for password field
@@ -85,7 +86,18 @@ const userLogin = reactive<UserLogin>({
  */
 function onSubmit() {
   authIsLoading.value = true;
-
+  const auth = getAuth();
+  signInWithEmailAndPassword(auth, userLogin.email, userLogin.password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      console.log(user);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode + errorMessage);
+    });
   setTimeout(() => {
     console.log('connected with : ', userLogin);
     authIsLoading.value = false;
