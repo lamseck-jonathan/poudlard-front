@@ -78,7 +78,7 @@
 
     <!-- table body customization -->
     <template v-slot:body="props">
-      <q-tr :props="props">
+      <q-tr :props="props" @click="emit('click:row', props.row)">
         <q-td
           v-for="column in props.cols"
           :key="column.name"
@@ -104,7 +104,11 @@
               <q-badge color="negative" :label="'Non'" v-else />
             </template>
             <template v-else>
-              {{ props.row[column.name] }}
+              {{
+                column.format
+                  ? column.format(props.row[column.name])
+                  : props.row[column.name]
+              }}
             </template>
           </span>
         </q-td>
@@ -178,10 +182,16 @@ import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { computed, PropType, ref } from 'vue';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
+import { CrudAction } from 'src/enums/CrudAction.enum';
 
 const mainLayoutStore = useMainLayoutStore();
 
-const emit = defineEmits(['click:add', 'click:delete', 'click:contextItem']);
+const emit = defineEmits([
+  'click:add',
+  'click:delete',
+  'click:contextItem',
+  'click:row',
+]);
 
 const filter = ref<string>('');
 const isCompactMode = ref<boolean>(false);
@@ -258,19 +268,19 @@ const props = defineProps({
     default: () => [
       {
         label: 'Voir',
-        event: 'voir',
+        event: CrudAction.READ,
         appendIcon: 'mdi-eye-outline',
         isDisabled: false,
       },
       {
         label: 'Modifier',
-        event: 'modifier',
+        event: CrudAction.UPDATE,
         appendIcon: 'mdi-file-edit-outline',
         isDisabled: false,
       },
       {
         label: 'Supprimer',
-        event: 'supprimer',
+        event: CrudAction.DELETE,
         appendIcon: 'mdi-trash-can-outline',
         isDisabled: false,
       },

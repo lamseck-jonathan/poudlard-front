@@ -5,6 +5,17 @@ export interface UserLogin {
   password: string;
 }
 
+export interface User {
+  id: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  role: Role;
+  telephone: string;
+  adresse: string;
+  actif: boolean;
+}
+
 export interface UserSignIn {
   nom: string;
   prenom: string;
@@ -16,13 +27,4 @@ export interface UserSignIn {
   mdpVerif: string;
 }
 
-export interface UserListing {
-  id: string;
-  nom: string;
-  prenom: string;
-  email: string;
-  role: Role;
-  telephone: string;
-  adresse: string;
-  actif: boolean;
-}
+export type UserListing = User;

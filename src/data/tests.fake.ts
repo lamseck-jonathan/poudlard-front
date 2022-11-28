@@ -422,7 +422,7 @@ export const fakeFrontendTestList = [
 
 export const fakeBackendTestList = [
   {
-    id: '1',
+    id: '5',
     titre: "C'est quoi MYSQL ... ",
     description: 'MySQL est un système de gestion de base de données _____?',
     categorie: 'SGBD',
@@ -453,7 +453,7 @@ export const fakeBackendTestList = [
     ],
   },
   {
-    id: '2',
+    id: '6',
     titre: 'Attribut BD Relationnel ',
     description:
       'Qu’est-ce qui représente un attribut dans une base de données relationnelle ?',
@@ -470,7 +470,7 @@ export const fakeBackendTestList = [
       {
         id: 2,
         reponse: 'Ligne',
-        isTrue: false,
+        isTrue: true,
       },
       {
         id: 3,
@@ -480,12 +480,12 @@ export const fakeBackendTestList = [
       {
         id: 4,
         reponse: 'Objet',
-        isTrue: true,
+        isTrue: false,
       },
     ],
   },
   {
-    id: '3',
+    id: '7',
     titre: 'Selectionner une BD par défaut ',
     description:
       'Quelle instruction est utilisée pour sélectionner une base de données par défaut?',
@@ -517,7 +517,7 @@ export const fakeBackendTestList = [
     ],
   },
   {
-    id: '4',
+    id: '8',
     titre: 'le Sigle PHP',
     description: 'Que signifie PHP?',
     categorie: 'PHP',
@@ -548,7 +548,7 @@ export const fakeBackendTestList = [
     ],
   },
   {
-    id: '5',
+    id: '9',
     titre: 'Commentaire en PHP',
     description: 'Nous pouvons utiliser ___ pour commenter une seule ligne?',
     categorie: 'PHP',

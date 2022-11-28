@@ -6,14 +6,11 @@ export interface Sujet {
   titre: string;
   description: string;
   niveau: Niveau;
+  auteur?: string;
+  tests: Test[];
 }
 
-export interface SujetListing {
-  id: string;
-  titre: string;
-  description: string;
-  niveau: Niveau;
-  tests: Test[];
+export interface SujetListing extends Sujet {
   totalPoint?: number;
   totalDuree?: string;
 }

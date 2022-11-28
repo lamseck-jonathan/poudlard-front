@@ -1,6 +1,8 @@
 <template>
   <q-dialog class="full-width" v-model="showModal">
-    <q-card :style="{ width: props.width, maxWidth: '1500px' }">
+    <q-card
+      :style="{ width: props.width, maxWidth: '1500px', height: props.height }"
+    >
       <q-card-section
         class="row items-center q-py-md bg-blue-grey-7 text-white"
       >
@@ -32,6 +34,10 @@ const props = defineProps({
   width: {
     type: String,
     default: '900px',
+  },
+  height: {
+    type: String,
+    required: false,
   },
 });
 
