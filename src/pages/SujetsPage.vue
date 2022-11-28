@@ -39,10 +39,23 @@ import { msToTime } from 'src/utils/timeConvertor.util';
 import { onMounted } from 'vue';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import getEmptySujetModel from 'src/utils/getEmptySujet.util';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getFirestore,
+  updateDoc,
+} from 'firebase/firestore/lite';
+import { useSujetStore } from 'src/stores/sujet-store';
+import { firebaseApp } from 'src/firebase';
 
 /*-------- MainLayout Store --------*/
 
 const mainLayoutStore = useMainLayoutStore();
+const sujetStore = useSujetStore();
+const db = getFirestore(firebaseApp);
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
@@ -89,8 +102,29 @@ const columns: DatagridColumns[] = [
 ];
 
 /*-------- Listing Operation --------*/
+sujetStore.fetchSujetList();
+const sujetList = computed(() => {
+  return sujetStore.sujets;
+});
 
-const sujetList = ref<SujetListing[]>([...fakeSujetList]);
+async function addSujet(sujetItem: Sujet) {
+  const addResult = await addDoc(collection(db, 'sujet'), sujetItem);
+  const docRef = doc(db, 'sujet', addResult.id);
+  await updateDoc(docRef, {
+    id: addResult.id,
+  });
+  const docSnap = await getDoc(docRef);
+  const newSujet: Sujet = docSnap.data() as Sujet;
+  sujetStore.sujets.push(newSujet);
+  console.log(sujetStore.sujets);
+}
+
+async function updateSujet(sujetItem: Sujet) {
+  const docRef = doc(db, 'sujet', sujetItem.id);
+  await updateDoc(docRef, {
+    sujetItem,
+  });
+}
 
 const formattedSujetList = computed((): SujetListing[] => {
   return sujetList.value.map((sujet) => ({
@@ -151,6 +185,7 @@ const sujetModel = ref<Sujet>(getEmptySujetModel());
 function handleContextMenuClick(itemMenu: ItemContextMenu, data: SujetListing) {
   switch (itemMenu.event) {
     case CrudAction.READ:
+      console.log(data);
       openSujetForm(CrudAction.READ);
       sujetModel.value = data;
       break;
@@ -174,6 +209,7 @@ function handleContextMenuClick(itemMenu: ItemContextMenu, data: SujetListing) {
  */
 function onAddSujet() {
   openSujetForm(CrudAction.CREATE);
+  console.log(sujetCrudAction.value);
 }
 
 /**
@@ -188,18 +224,21 @@ function openSujetForm(crudAction: CrudAction) {
 /**
  * @desc hangle on form submit
  */
-function onFormSubmit() {
+async function onFormSubmit() {
   switch (sujetCrudAction.value) {
     case CrudAction.CREATE:
-      sujetList.value.push(sujetModel.value);
+      await addSujet(sujetModel.value);
+      //sujetList.value.push(sujetModel.value);
       closeModal();
       break;
 
     case CrudAction.UPDATE:
+      await updateSujet(sujetModel.value);
       const idx = sujetList.value.findIndex(
         (el) => el.id === sujetModel.value.id
       );
       sujetList.value[idx] = sujetModel.value;
+
       closeModal();
       break;
 
@@ -217,11 +256,12 @@ function deleteSujet(idSujet: string) {
     'Voulez vous vraiment supprimer définitivement cette élément de la base ?'
   );
 
-  confirmationPopup.onOk(({ clicked }) => {
+  confirmationPopup.onOk(async ({ clicked }) => {
     if (clicked === PopupButton.YES) {
       const idx = sujetList.value.findIndex((el) => el.id === idSujet);
 
       if (idx > -1) {
+        await deleteDoc(doc(db, 'sujet', idSujet));
         sujetList.value.splice(idx, 1); // delete sujet from array
       }
     }
