@@ -25,13 +25,20 @@ export function usePopup(
   return { popup };
 }
 
-export function useErrorPopup(title: string, message: string) {
+export function useErrorPopup(
+  title: string,
+  message: string,
+  buttonLabel?: string,
+  hideClosePopup?: boolean
+) {
   const errorPopup = Dialog.create({
     component: BasePopup,
     componentProps: {
       title,
       message,
       popupType: PopupType.ERROR,
+      okButtonLabel: buttonLabel,
+      hideClosePopup,
     },
   });
   return { errorPopup };
