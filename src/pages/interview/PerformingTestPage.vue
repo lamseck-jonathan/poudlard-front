@@ -4,7 +4,10 @@
       <div
         class="col-md-6 col-sm-12 flex justify-center q-py-md q-pl-md q-pr-sm"
       >
-        <panel-section-test :test="currentTest" />
+        <panel-section-test
+          :test="currentTest"
+          @click:next-question="displayNextTest()"
+        />
       </div>
       <div
         class="col-md-6 col-sm-12 flex justify-center q-py-md q-pl-sm q-pr-md"
@@ -36,6 +39,7 @@ import { fakeBackendTestList, fakeFrontendTestList } from 'src/data/tests.fake';
 import { Test } from 'src/model/Test.interface';
 import { ReponseCandidat } from 'src/model/Reponse.interface';
 import { onBeforeMount, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const counter = ref<number>(0);
 const currentTest = ref<Test>({} as Test);
@@ -44,6 +48,7 @@ const testList = reactive<Test[]>([
   ...fakeFrontendTestList,
   ...fakeBackendTestList,
 ]);
+const router = useRouter();
 
 const reponseCandidats = reactive<ReponseCandidat[]>([]);
 
@@ -66,6 +71,8 @@ function displayNextTest() {
     initAnswerModel(currentTest.value);
   } else {
     console.log('resultat : ', reponseCandidats);
+    // modifié le sujet (ajouter les reponses de tests et statut = achevé)
+    router.push({ name: 'interview-finished' });
   }
 }
 
