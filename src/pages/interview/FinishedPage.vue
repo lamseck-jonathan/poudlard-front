@@ -11,30 +11,67 @@
         </q-card-section>
       </q-card>
 
-      <div class="q-pl-md">
+      <form
+        v-if="!isRetourSent"
+        class="q-pl-md"
+        ref="formRef"
+        @submit.prevent="sendEmail()"
+      >
         <div class="text-h6 q-mb-sm">Voudriez-vous faire un retour ?</div>
         <q-input
           v-model="retourModel"
           type="textarea"
+          name="message"
           hide-bottom-space
           outlined
           dense
         />
 
         <q-btn
+          :loading="retourIsLoading"
           class="q-mt-md"
           label="envoyer"
           color="primary"
+          type="submit"
           style="width: 100%"
           dense
         />
-      </div>
+      </form>
+
+      <div v-else class="q-pl-md text-h5 text-weight-bold">Retour envoyé!</div>
     </div>
   </q-page>
 </template>
 
 <script lang="ts" setup>
+import emailjs from '@emailjs/browser';
+import { QForm } from 'quasar';
 import { ref } from 'vue';
 
-const retourModel = ref<string>(''); // à envoyer via email.js
+const retourModel = ref<string>('');
+const isRetourSent = ref<boolean>(false);
+const formRef = ref<QForm>();
+const retourIsLoading = ref<boolean>(false);
+
+function sendEmail() {
+  retourIsLoading.value = true;
+  emailjs
+    .sendForm(
+      'service_v2rkscu', // service ID
+      'template_aum7t0r', // template ID
+      formRef.value,
+      'N74lDjcCiDXuYrvtV' // public Key
+    )
+    .then(
+      (result: unknown) => {
+        console.log('SUCCESS!', result);
+        isRetourSent.value = true;
+        retourModel.value = '';
+      },
+      (error: unknown) => {
+        console.log('FAILED...', error);
+      }
+    )
+    .finally(() => (retourIsLoading.value = false));
+}
 </script>
