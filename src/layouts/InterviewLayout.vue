@@ -4,6 +4,7 @@
       <q-toolbar>
         <q-toolbar-title>
           <q-btn
+            v-show="false"
             label="Abandonner"
             icon="mdi-arrow-left"
             color="white"
