@@ -16,7 +16,6 @@
 
 <script lang="ts" setup>
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
-import { fakeEntretiensList } from 'src/data/fakeEntretiens.fake';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Entretien } from 'src/model/Entretien.interface';
