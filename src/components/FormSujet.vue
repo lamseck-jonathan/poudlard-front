@@ -109,13 +109,25 @@ import { Niveau } from 'src/enums/Niveau.enum';
 import { Sujet } from 'src/model/Sujet.interface';
 import { computed, onBeforeMount, onMounted, PropType, ref, watch } from 'vue';
 import { required } from 'src/utils/validationRules.util';
-import { fakeBackendTestList, fakeFrontendTestList } from 'src/data/tests.fake';
-import { Test } from 'src/model/Test.interface';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import getEmptySujetModel from 'src/utils/getEmptySujet.util';
+import { useTestStore } from 'src/stores/test-store';
 
 const sujetModel = ref<Sujet>(getEmptySujetModel());
-const allTests = ref<Test[]>([...fakeFrontendTestList, ...fakeBackendTestList]);
+// const allTests = ref<Test[]>([...fakeFrontendTestList, ...fakeBackendTestList]);
+const testStore = useTestStore();
+
+const allTests = computed({
+  get() {
+    return testStore.tests.filter(
+      (test) =>
+        sujetModel.value.tests.findIndex((el) => el.id === test.id) === -1
+    );
+  },
+  set(newValue) {
+    return newValue;
+  },
+});
 
 const emit = defineEmits(['update:modelValue', 'submit']);
 const props = defineProps({
@@ -127,6 +139,10 @@ const props = defineProps({
     type: String as PropType<CrudAction>,
     required: true,
   },
+});
+
+onBeforeMount(() => {
+  testStore.fetchTestList();
 });
 
 onMounted(() => {
@@ -171,12 +187,6 @@ const niveauOptions: Niveau[] = [
   Niveau.INTERMEDIAIRE,
   Niveau.AVANCE,
 ];
-
-onBeforeMount(() => {
-  allTests.value = allTests.value.filter(
-    (test) => sujetModel.value.tests.findIndex((el) => el.id === test.id) === -1
-  );
-});
 
 function onSubmit() {
   emit('submit', sujetModel.value);
