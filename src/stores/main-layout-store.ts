@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia';
 import { SideBarMenu } from 'src/model/SideBarMenu.interface';
+import { User } from 'src/model/User.interface';
 
 export const useMainLayoutStore = defineStore('mainLayout', {
   state: () => ({
+    currentUser: <User>{},
     navbarPageInfo: <SideBarMenu>{
       icon: 'dashboard',
       title: 'dashboard',
