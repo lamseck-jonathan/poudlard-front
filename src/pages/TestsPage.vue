@@ -61,6 +61,7 @@ import getEmptyTestModel from 'src/utils/getEmptyTest.util';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getFirestore,
@@ -204,13 +205,10 @@ function onDeleteTest(test: Test) {
     'Voulez vous vraiment supprimer définitivement cette élément de la base ?'
   );
 
-  confirmationPopup.onOk(({ clicked }) => {
+  confirmationPopup.onOk(async ({ clicked }) => {
     if (clicked === PopupButton.YES) {
-      const idx = tests.value.findIndex((el) => el.id === test.id);
-
-      if (idx > -1) {
-        tests.value.splice(idx, 1); // delete test from array
-      }
+      console.log('delete', test);
+      await deleteDoc(doc(db, 'test', test.id));
     }
   });
 }

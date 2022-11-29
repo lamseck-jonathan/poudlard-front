@@ -33,7 +33,7 @@ import BaseModal from 'src/components/BaseModal.vue';
 import FormUtilisateur from 'src/components/FormUtilisateur.vue';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { User, UserListing } from 'src/model/User.interface';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
@@ -45,6 +45,10 @@ const userStore = useUserStore();
 const db = getFirestore(firebaseApp);
 /*-------- MainLayout Store --------*/
 const mainLayoutStore = useMainLayoutStore();
+
+onBeforeMount(() => {
+  userStore.fetchUserList();
+});
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
@@ -155,7 +159,6 @@ const columns: DatagridColumns[] = [
   },
 ];
 
-userStore.fetchUserList();
 const users = computed<UserListing[]>(() => {
   return userStore.users as UserListing[];
 });

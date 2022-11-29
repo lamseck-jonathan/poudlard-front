@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import SectionAnswer from 'src/components/SectionAnswer.vue';
 import SectionTest from 'src/components/SectionTest.vue';
+import { TestType } from 'src/enums/TestType.enum';
 import { Test } from 'src/model/Test.interface';
 import { reactive } from 'vue';
 const test = reactive<Test>({
@@ -21,11 +22,7 @@ const test = reactive<Test>({
   categorie: 'QCMU',
   duree: 30000,
   bareme: 4,
-  type: {
-    id: 1,
-    type_test: 'QR',
-    label: 'Question Choix Multiple',
-  },
+  type: TestType.QCMU,
   choix: [
     {
       id: 1,

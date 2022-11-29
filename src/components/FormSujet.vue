@@ -109,15 +109,16 @@ import { Niveau } from 'src/enums/Niveau.enum';
 import { Sujet } from 'src/model/Sujet.interface';
 import { computed, onBeforeMount, onMounted, PropType, ref, watch } from 'vue';
 import { required } from 'src/utils/validationRules.util';
+import { Test } from 'src/model/Test.interface';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import getEmptySujetModel from 'src/utils/getEmptySujet.util';
 import { useTestStore } from 'src/stores/test-store';
 
-const sujetModel = ref<Sujet>(getEmptySujetModel());
-// const allTests = ref<Test[]>([...fakeFrontendTestList, ...fakeBackendTestList]);
 const testStore = useTestStore();
 
-const allTests = computed({
+const sujetModel = ref<Sujet>(getEmptySujetModel());
+
+const allTests = computed<Test[]>({
   get() {
     return testStore.tests.filter(
       (test) =>
