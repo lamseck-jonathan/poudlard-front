@@ -48,7 +48,10 @@
 import FormTest from 'src/components/FormTest.vue';
 import TestItemDisplay from 'src/components/TestItemDisplay.vue';
 import BaseModal from 'src/components/BaseModal.vue';
-import { useConfirmationPopup } from 'src/composables/Popup.composable';
+import {
+  useConfirmationPopup,
+  useLoadingPopup,
+} from 'src/composables/Popup.composable';
 import { PopupButton } from 'src/enums/Popup.enum';
 import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
@@ -68,12 +71,16 @@ import {
   updateDoc,
 } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
 
 /*-------- MainLayout Store --------*/
 
 const mainLayoutStore = useMainLayoutStore();
 const testStore = useTestStore();
 const db = getFirestore(firebaseApp);
+
+const { loadingPopup } = useLoadingPopup();
 
 onMounted(async () => {
   mainLayoutStore.setNavBarpageInfo({
@@ -129,6 +136,7 @@ async function addTest(testItem: Test) {
   const docSnap = await getDoc(docRef);
   const newTest: Test = docSnap.data() as Test;
   testStore.tests.push(newTest);
+  useToast('Succès', 'Ajout éfféctué avec succès', ToastType.SUCCESS);
   console.log(testStore.tests);
 }
 
@@ -137,6 +145,7 @@ async function updateTest(testItem: Test) {
   await updateDoc(docRef, {
     ...testItem,
   });
+  useToast('Succès', 'Ajout éfféctué avec succès', ToastType.SUCCESS);
 }
 
 /**
@@ -208,7 +217,14 @@ function onDeleteTest(test: Test) {
   confirmationPopup.onOk(async ({ clicked }) => {
     if (clicked === PopupButton.YES) {
       console.log('delete', test);
+      loadingPopup.show();
       await deleteDoc(doc(db, 'test', test.id));
+
+      const idx = testStore.tests.findIndex((el) => el.id === test.id);
+      testStore.tests.splice(idx, 1);
+      loadingPopup.hide();
+
+      useToast('Succès', 'Suppression réussie', ToastType.SUCCESS);
     }
   });
 }

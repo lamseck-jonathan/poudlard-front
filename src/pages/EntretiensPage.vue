@@ -4,8 +4,8 @@
       row-key="id"
       :columns="columns"
       :rows="rows"
+      :loading="entretienStore.isLoading"
       @click:add="onAdd"
-      @click:delete="onDeleteEntretien"
       @click:context-item="
         ({ itemMenu, data }) => handleContextMenuClick(itemMenu, data)
       "
@@ -19,8 +19,10 @@
 import { deleteDoc, doc, getFirestore } from 'firebase/firestore/lite';
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import { useConfirmationPopup } from 'src/composables/Popup.composable';
+import { useToast } from 'src/composables/Toast.composable';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import { PopupButton } from 'src/enums/Popup.enum';
+import { ToastType } from 'src/enums/ToastType.enum';
 import { firebaseApp } from 'src/firebase';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Entretien } from 'src/model/Entretien.interface';
@@ -55,7 +57,6 @@ function onAdd() {
 
 function handleContextMenuClick(itemMenu: ItemContextMenu, data: Entretien) {
   entretienStore.FormEntretien = data;
-  console.log(entretienStore.FormEntretien);
 
   switch (itemMenu.event) {
     case CrudAction.READ:
@@ -66,6 +67,12 @@ function handleContextMenuClick(itemMenu: ItemContextMenu, data: Entretien) {
     case CrudAction.UPDATE:
       entretienStore.crudAction = CrudAction.UPDATE;
       router.push({ name: 'formulaire-entretien' });
+      break;
+
+    case CrudAction.DELETE:
+      entretienStore.crudAction = CrudAction.DELETE;
+      onDeleteEntretien(entretienStore.FormEntretien);
+      break;
 
     default:
       break;
@@ -120,6 +127,14 @@ function onDeleteEntretien(entretien: Entretien) {
   confirmationPopup.onOk(async ({ clicked }) => {
     if (clicked === PopupButton.YES) {
       await deleteDoc(doc(db, 'entretien', entretien.id));
+
+      useToast('SUCCES', 'Supression réussie', ToastType.SUCCESS);
+
+      const idx = entretienStore.entretiens.findIndex(
+        (el) => el.id === entretien.id
+      );
+
+      entretienStore.entretiens.splice(idx, 1);
     }
   });
 }

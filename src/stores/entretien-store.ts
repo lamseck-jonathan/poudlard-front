@@ -6,7 +6,9 @@ import {
   updateDoc,
 } from 'firebase/firestore/lite';
 import { defineStore } from 'pinia';
+import { useToast } from 'src/composables/Toast.composable';
 import { CrudAction } from 'src/enums/CrudAction.enum';
+import { ToastType } from 'src/enums/ToastType.enum';
 import { firebaseApp } from 'src/firebase';
 import { Entretien } from 'src/model/Entretien.interface';
 
@@ -29,12 +31,23 @@ export const useEntretienStore = defineStore('entretien', {
 
   actions: {
     async fetchEntretienList() {
-      const entretienSnapshot = await getDocs(entretienCollection);
-      const entretienList = entretienSnapshot.docs.map((doc) =>
-        doc.data()
-      ) as Entretien[];
-      this.entretiens = entretienList;
-      console.log(this.entretiens);
+      this.isLoading = true;
+      try {
+        const entretienSnapshot = await getDocs(entretienCollection);
+        const entretienList = entretienSnapshot.docs.map((doc) =>
+          doc.data()
+        ) as Entretien[];
+        this.entretiens = entretienList;
+        console.log(this.entretiens);
+      } catch (err) {
+        useToast(
+          'Erreur',
+          'Une erreur est survenu lors du traitement ',
+          ToastType.ERROR
+        );
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     getAllEntretien() {
@@ -63,9 +76,21 @@ export const useEntretienStore = defineStore('entretien', {
         try {
           const docRef = doc(db, 'entretien', entretienItem.id);
           await updateDoc(docRef, { ...entretienItem });
-          console.log('updated successfully');
+
+          useToast(
+            'Succès',
+            'Entretien mise à jour avec succès',
+            ToastType.SUCCESS
+          );
+
+          resolve(null);
         } catch (err) {
-          console.log('update entretien error ', entretienItem);
+          useToast(
+            'Erreur',
+            'Un erreur est survenu lors de la mise à jour',
+            ToastType.ERROR
+          );
+
           reject(err);
         } finally {
           this.isLoading = false;

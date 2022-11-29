@@ -111,7 +111,7 @@ function onSubmit() {
 }
 
 function foundInCandidat(userEmail: string) {
-  const idx = usersStore.users.findIndex((el) => el.email === userEmail);
+  const idx = usersStore.candidats.findIndex((el) => el.email === userEmail);
   return idx > -1;
 }
 </script>

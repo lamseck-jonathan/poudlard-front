@@ -1,4 +1,5 @@
 <template>
+  <q-linear-progress v-if="props.loading" indeterminate />
   <q-table
     v-model:pagination="pagination"
     class="neo_datagrid full-width"
@@ -8,7 +9,6 @@
     :rows="props.rows"
     :columns="props.columns"
     :row-key="props.rowKey"
-    :loading-label="'Chargement'"
     :no-data-label="'Aucune données à afficher'"
     :dense="isCompactMode"
     flat
@@ -211,6 +211,10 @@ const pagesNumber = computed(() =>
 );
 
 const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false,
+  },
   title: {
     type: String,
     required: false,

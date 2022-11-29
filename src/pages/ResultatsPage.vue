@@ -89,7 +89,6 @@ const columns: DatagridColumns[] = [
     align: 'left',
     field: (row) => row.note,
     sortable: true,
-    sort: (a, b) => a - b,
   },
 ];
 
@@ -101,13 +100,13 @@ function calcResultatNote(responses: ReponseCandidat[]) {
     switch (test.type) {
       case TestType.QR:
         if (res.reponseQR && res.reponseQR === test.reponse) {
-          note += test.bareme;
+          note += Number(test.bareme);
         }
         break;
 
       case TestType.QCMU:
         if (res.reponseQCMU && res.reponseQCMU.isTrue) {
-          note += test.bareme;
+          note += Number(test.bareme);
         }
 
         break;
@@ -119,7 +118,7 @@ function calcResultatNote(responses: ReponseCandidat[]) {
             if (!r.isTrue) isValid = false;
           });
 
-          if (isValid) note += test.bareme;
+          if (isValid) note += Number(test.bareme);
         }
         break;
 

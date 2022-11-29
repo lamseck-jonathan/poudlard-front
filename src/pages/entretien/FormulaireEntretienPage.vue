@@ -19,10 +19,18 @@ import {
   updateDoc,
 } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
+import { useRouter } from 'vue-router';
+import { CrudAction } from 'src/enums/CrudAction.enum';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
+import { useLoadingPopup } from 'src/composables/Popup.composable';
 
 const mainLayoutStore = useMainLayoutStore();
 const entretienStore = useEntretienStore();
 const db = getFirestore(firebaseApp);
+const router = useRouter();
+
+const { loadingPopup } = useLoadingPopup();
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
@@ -34,6 +42,7 @@ onMounted(() => {
 });
 
 async function addEntretien(entretienItem: Entretien) {
+  loadingPopup.show();
   const addResult = await addDoc(collection(db, 'entretien'), entretienItem);
   const docRef = doc(db, 'entretien', addResult.id);
   await updateDoc(docRef, {
@@ -42,10 +51,31 @@ async function addEntretien(entretienItem: Entretien) {
   const docSnap = await getDoc(docRef);
   const newEntretien: Entretien = docSnap.data() as Entretien;
   entretienStore.entretiens.push(newEntretien);
+
+  loadingPopup.hide();
+
+  useToast('Succès', 'Entretien ajouté avec succès', ToastType.SUCCESS);
+
   console.log(entretienStore.entretiens);
 }
 
-function onFormSubmit() {
-  addEntretien(entretienStore.FormEntretien);
+async function onFormSubmit() {
+  switch (entretienStore.crudAction) {
+    case CrudAction.CREATE:
+      await addEntretien(entretienStore.FormEntretien);
+      router.push({ name: 'entretien' });
+      break;
+
+    case CrudAction.UPDATE:
+      loadingPopup.show();
+      entretienStore.updateEntretien(entretienStore.FormEntretien).then(() => {
+        loadingPopup.hide();
+        router.push({ name: 'entretien' });
+      });
+      break;
+
+    default:
+      break;
+  }
 }
 </script>

@@ -6,6 +6,7 @@
       :rows="users"
       :action-btn="false"
       :context-menu-items="contextMenuItems"
+      :loading="userStore.isLoading"
       @click:context-item="
         ({ itemMenu, data }) => onContextMenuClick(itemMenu, data)
       "
@@ -40,9 +41,15 @@ import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { useUserStore } from 'src/stores/user-store';
 import { doc, getFirestore, updateDoc } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
+import { useLoadingPopup } from 'src/composables/Popup.composable';
 
 const userStore = useUserStore();
 const db = getFirestore(firebaseApp);
+
+const { loadingPopup } = useLoadingPopup();
+
 /*-------- MainLayout Store --------*/
 const mainLayoutStore = useMainLayoutStore();
 
@@ -168,6 +175,7 @@ function closeModal() {
 }
 
 async function updateUtilisateur(user: UserListing) {
+  loadingPopup.show();
   const docRef = doc(db, 'user', user.id);
   await updateDoc(docRef, {
     id: user.id,
@@ -176,9 +184,14 @@ async function updateUtilisateur(user: UserListing) {
     email: user.email,
     role: user.role,
     telephone: user.telephone,
-    adresse: user.adresse,
     actif: user.actif,
   });
+
+  const idx = userStore.users.findIndex((el) => el.id === user.id);
+  userStore.users[idx] = { ...user };
+
+  loadingPopup.hide();
+  useToast('Succès', 'Utilisateur modifié avec succès', ToastType.SUCCESS);
 }
 
 /**

@@ -12,6 +12,8 @@ import {
 } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
 import { Role } from 'src/enums/Role.enum';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
 
 const db = getFirestore(firebaseApp);
 const userCollection = collection(db, 'user');
@@ -21,6 +23,7 @@ export const useUserStore = defineStore('user', {
     users: [] as User[],
     candidats: [] as User[],
     user: {} as User,
+    isLoading: false,
   }),
   getters: {
     getListUser: (state) => state.users,
@@ -29,21 +32,41 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     async fetchUserList() {
-      const userSnapshot = await getDocs(userCollection);
-      const userList = userSnapshot.docs.map((doc) => doc.data()) as User[];
-      this.users = userList;
-      console.log(this.users);
+      this.isLoading = true;
+      try {
+        const userSnapshot = await getDocs(userCollection);
+        const userList = userSnapshot.docs.map((doc) => doc.data()) as User[];
+        this.users = userList;
+        console.log(this.users);
+      } catch (err) {
+        useToast(
+          'Erreur',
+          "Une erreur s' est produite en récupérant les utilisateurs",
+          ToastType.ERROR
+        );
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     async fetchCandidatList() {
-      const queryResult = query(
-        userCollection,
-        where('role', '==', Role.CANDIDAT)
-      );
-      const userSnapshot = await getDocs(queryResult);
-      const candidatList = userSnapshot.docs.map((doc) => doc.data()) as User[];
-      this.candidats = candidatList;
-      console.log(this.candidats);
+      this.isLoading = true;
+      try {
+        const queryResult = query(
+          userCollection,
+          where('role', '==', Role.CANDIDAT)
+        );
+        const userSnapshot = await getDocs(queryResult);
+        const candidatList = userSnapshot.docs.map((doc) =>
+          doc.data()
+        ) as User[];
+        this.candidats = candidatList;
+        console.log(this.candidats);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     async addUtilisateur(id: string, usersignIn: UserSignIn) {
