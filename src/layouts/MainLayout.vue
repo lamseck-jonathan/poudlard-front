@@ -45,8 +45,10 @@
           <q-item-section class="navbar_title text-gray">
             <q-item-label class="user_name text-uppercase text-weight-bold">
               {{
-                mainLayoutStore.currentUser.prenom
-                  ? `${mainLayoutStore.currentUser.prenom} ${mainLayoutStore.currentUser.nom}`
+                mainLayoutStore.currentUser
+                  ? `${mainLayoutStore.currentUser.prenom || ''} ${
+                      mainLayoutStore.currentUser.nom || ''
+                    }`
                   : 'Chargement ...'
               }}
             </q-item-label>
