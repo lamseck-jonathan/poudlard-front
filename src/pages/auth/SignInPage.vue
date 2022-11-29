@@ -37,14 +37,15 @@
             <q-input
               v-model="userSingIn.email"
               label="Email"
-              class="q-pr-sm col-md-6"
+              class="q-pr-sm col"
               :rules="[required, isValidEmail]"
               hide-bottom-space
               outlined
               dense
             />
 
-            <q-input
+            <!-- <q-input
+              v-show="false"
               v-model="userSingIn.role"
               label="Role"
               class="q-pl-sm col-md-6"
@@ -52,10 +53,11 @@
               hide-bottom-space
               outlined
               dense
-            />
+            /> -->
           </div>
 
-          <q-input
+          <!-- <q-input
+            v-show="false"
             model-value=""
             label="Clef d'inscription"
             class="w-full"
@@ -63,7 +65,7 @@
             hide-bottom-space
             outlined
             dense
-          />
+          /> -->
 
           <div class="row">
             <q-input
@@ -168,6 +170,7 @@ import {
 import { firebaseApp } from 'src/firebase';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useRouter } from 'vue-router';
+import { Role } from 'src/enums/Role.enum';
 
 const fakeLoader = ref<boolean>(false);
 const isPwd = ref<boolean>(true); // for password field
@@ -177,11 +180,12 @@ const userSingIn = reactive<UserSignIn>({
   nom: '',
   prenom: '',
   email: '',
-  role: '',
+  role: Role.CANDIDAT,
   telephone: '',
   adresse: '',
   mdp: '',
   mdpVerif: '',
+  actif: true,
 });
 
 const isPwdMatch = () =>
