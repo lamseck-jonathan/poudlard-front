@@ -121,7 +121,7 @@ async function addSujet(sujetItem: Sujet) {
 async function updateSujet(sujetItem: Sujet) {
   const docRef = doc(db, 'sujet', sujetItem.id);
   await updateDoc(docRef, {
-    sujetItem,
+    ...sujetItem,
   });
 }
 
