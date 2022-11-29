@@ -3,12 +3,17 @@ import { Niveau } from 'src/enums/Niveau.enum';
 import { SituationActuelle } from 'src/enums/SituationActuelle.enum';
 import { User } from './User.interface';
 
-export interface FicheCandidat extends User {
-  // information personnelle hérité de User
+export interface FicheCandidat {
+  id?: string;
+  id_user: string;
+
+  // information personnelle
+  user: User;
+
   posteConvoite?: string;
 
   // Compétences
-  competences?: Competence[];
+  competences: Competence[];
   anneeExperienceReelle?: number;
   niveauAcademique: NiveauAcademique;
   niveauFrancais: NiveauLinguistique;
