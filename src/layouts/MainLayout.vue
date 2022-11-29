@@ -134,6 +134,12 @@ const menuItems: SideBarMenu[] = [
     routeName: 'entretiens  ',
     path: '/entretiens',
   },
+  {
+    icon: 'mdi-clipboard-text-outline',
+    title: 'resultat',
+    routeName: 'resultats  ',
+    path: '/resultats',
+  },
 ];
 
 const mainLayoutStore = useMainLayoutStore();

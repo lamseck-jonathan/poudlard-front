@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-toolbar-title>
           <q-btn
-            label="Abandonner"
+            label="Déconnexion"
             icon="mdi-arrow-left"
             color="white"
             outline

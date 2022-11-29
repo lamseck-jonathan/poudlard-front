@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        redirect: 'dashboard',
+        redirect: '/dashboard',
       },
       {
         path: 'dashboard',
@@ -50,6 +50,11 @@ const routes: RouteRecordRaw[] = [
         path: 'entretiens/formulaire',
         name: 'formulaire-entretien',
         component: () => import('pages/entretien/FormulaireEntretienPage.vue'),
+      },
+      {
+        path: 'resultats',
+        name: 'resultats',
+        component: () => import('pages/ResultatsPage.vue'),
       },
     ],
   },

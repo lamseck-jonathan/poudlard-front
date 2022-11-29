@@ -1,11 +1,18 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-card class="q-dialog-plugin neo_popup">
       <!-- header  -->
       <q-card-section class="row items-center q-pb-sm">
         <div class="text-h5 text-uppercase">{{ title }}</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn
+          v-if="!props.hideClosePopup"
+          icon="close"
+          flat
+          round
+          dense
+          v-close-popup
+        />
       </q-card-section>
       <!-- body  -->
       <q-card-section> {{ message }} </q-card-section>
@@ -44,7 +51,7 @@
           padding="8px lg"
           color="primary"
           v-if="actionButtons.includes(PopupButton.OK)"
-          :label="'OK'"
+          :label="props.okButtonLabel"
           @click="onClickBtn(PopupButton.OK)"
         />
         <q-btn
@@ -86,6 +93,14 @@ const props = defineProps({
     required: false,
     type: String as PropType<PopupType>,
     default: PopupType.INFO,
+  },
+  okButtonLabel: {
+    type: String,
+    default: 'Ok',
+  },
+  hideClosePopup: {
+    type: Boolean,
+    default: false,
   },
 });
 
