@@ -54,7 +54,7 @@ import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { stringInclude } from 'src/utils/string.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { useTestStore } from 'src/stores/test-store';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import getEmptyTestModel from 'src/utils/getEmptyTest.util';
@@ -85,9 +85,12 @@ onMounted(async () => {
 
 /*-------- Search Operation --------*/
 
+onBeforeMount(() => {
+  testStore.fetchTestList();
+});
+
 const searchValue = ref<string>('');
 
-testStore.fetchTestList();
 const tests = computed(() => {
   return testStore.tests;
 });
@@ -131,15 +134,7 @@ async function addTest(testItem: Test) {
 async function updateTest(testItem: Test) {
   const docRef = doc(db, 'test', testItem.id);
   await updateDoc(docRef, {
-    id: testItem.id,
-    titre: testItem.titre,
-    description: testItem.description,
-    categorie: testItem.categorie,
-    duree: testItem.duree,
-    bareme: testItem.bareme,
-    choix: testItem.choix,
-    reponse: testItem.reponse,
-    type: testItem.type,
+    ...testItem,
   });
 }
 
