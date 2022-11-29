@@ -98,26 +98,27 @@
 </template>
 
 <script lang="ts" setup>
-import { emit } from 'process';
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import EntretienDisplayCandidatItem from 'src/components/EntretienDisplayCandidatItem.vue';
 import EntretienDisplaySujetItem from 'src/components/EntretienDisplaySujetItem.vue';
-import { fakeSujetList } from 'src/data/sujets.fake';
 import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
+import { Role } from 'src/enums/Role.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Sujet, SujetListing } from 'src/model/Sujet.interface';
 import { User } from 'src/model/User.interface';
 import { useEntretienStore } from 'src/stores/entretien-store';
+import { useSujetStore } from 'src/stores/sujet-store';
 import { useUserStore } from 'src/stores/user-store';
 import { totalDuree, totalPoint } from 'src/utils/sujet.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { required } from 'src/utils/validationRules.util';
-import { computed } from 'vue';
+import { computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 
 const emit = defineEmits(['submit']);
 const entretienStore = useEntretienStore();
 const userStore = useUserStore();
+const sujetStore = useSujetStore();
 const entretienStatutOptions: EntretienStatut[] = [
   EntretienStatut.EN_COURS,
   EntretienStatut.ANNULE,
@@ -153,12 +154,21 @@ const candidatColumns: DatagridColumns[] = [
 
 /*---------------- Candidat ----------------*/
 
-userStore.fetchCandidatList();
-console.log(userStore.users);
+onBeforeMount(() => {
+  userStore.fetchCandidatList();
+  sujetStore.fetchSujetList();
+});
+
 const candidatRows = computed(() => {
-  const allCandidats = userStore.users.filter((user) => {
-    return user.actif;
-  });
+  let allCandidats: User[] = [];
+
+  if (userStore.users) {
+    allCandidats = userStore.users.filter((user) => {
+      return user.actif && user.role === Role.CANDIDAT;
+    });
+  }
+
+  console.log('all candidats', allCandidats);
 
   return allCandidats;
 });
@@ -207,7 +217,7 @@ const sujetColumns: DatagridColumns[] = [
 ];
 
 const sujetRows = computed((): SujetListing[] => {
-  return [...fakeSujetList].map((sujet) => ({
+  return sujetStore.sujets.map((sujet) => ({
     id: sujet.id,
     titre: sujet.titre,
     description: sujet.description,
