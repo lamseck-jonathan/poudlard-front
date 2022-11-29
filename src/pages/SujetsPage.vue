@@ -32,7 +32,6 @@ import { PopupButton } from 'src/enums/Popup.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { Sujet, SujetListing } from 'src/model/Sujet.interface';
-import { Test } from 'src/model/Test.interface';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { onMounted } from 'vue';
@@ -49,6 +48,7 @@ import {
 } from 'firebase/firestore/lite';
 import { useSujetStore } from 'src/stores/sujet-store';
 import { firebaseApp } from 'src/firebase';
+import { totalDuree, totalPoint } from 'src/utils/sujet.util';
 
 /*-------- MainLayout Store --------*/
 
@@ -137,31 +137,6 @@ const formattedSujetList = computed((): SujetListing[] => {
   }));
 });
 
-/**
- * @desc calcule la total des durées des tests
- */
-function totalDuree(tests: Test[]) {
-  let totalDuree = 0;
-
-  for (const test of tests) {
-    totalDuree += test.duree;
-  }
-
-  return totalDuree;
-}
-
-/**
- * @desc calcule la total des points des tests
- */
-function totalPoint(tests: Test[]) {
-  let totalPoint = 0;
-
-  for (const test of tests) {
-    totalPoint += test.bareme;
-  }
-
-  return totalPoint;
-}
 /*-------- Modal handler --------*/
 
 const showSujetModal = ref<boolean>(false);
@@ -208,7 +183,6 @@ function handleContextMenuClick(itemMenu: ItemContextMenu, data: SujetListing) {
  */
 function onAddSujet() {
   openSujetForm(CrudAction.CREATE);
-  console.log(sujetCrudAction.value);
 }
 
 /**
