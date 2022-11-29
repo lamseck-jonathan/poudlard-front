@@ -70,10 +70,11 @@
 
 <script lang="ts" setup>
 import { UserLogin } from 'src/model/User.interface';
-import { reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useRouter } from 'vue-router';
+import { useUserStore } from 'src/stores/user-store';
 
 const isPwd = ref<boolean>(true); // for password field
 const userLogin = reactive<UserLogin>({
@@ -84,6 +85,11 @@ const userLogin = reactive<UserLogin>({
 const fakeLoader = ref<boolean>(false);
 const router = useRouter();
 const authStore = useAuthStore();
+const usersStore = useUserStore();
+
+onBeforeMount(async () => {
+  await usersStore.fetchCandidatList();
+});
 
 /**
  * @desc Submit form
@@ -93,17 +99,20 @@ function onSubmit() {
   authStore
     .login(userLogin)
     .then(() => {
-      console.log('user is connecte', authStore.userIsConnected);
-
-      if (userLogin.email === 'tafita.raza1@gmail.com') {
+      if (foundInCandidat(userLogin.email)) {
         router.push({ name: 'interview-home' });
       } else {
         router.push({ name: 'dashboard' });
       }
     })
     .finally(() => {
-      setTimeout(() => (fakeLoader.value = false), 2000);
+      setTimeout(() => (fakeLoader.value = false), 3000);
     });
+}
+
+function foundInCandidat(userEmail: string) {
+  const idx = usersStore.users.findIndex((el) => el.email === userEmail);
+  return idx > -1;
 }
 </script>
 

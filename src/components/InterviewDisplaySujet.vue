@@ -1,5 +1,5 @@
 <template>
-  <q-card class="row">
+  <q-card class="row" style="width: 80vw">
     <q-card-section class="col">
       <span class="text-weight-bold q-mb-md">Titre :</span> <br />
       {{ props.sujet.titre }}

@@ -156,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
 import { UserSignIn } from 'src/model/User.interface';
 import { User } from 'firebase/auth';
@@ -171,6 +171,7 @@ import { firebaseApp } from 'src/firebase';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useRouter } from 'vue-router';
 import { Role } from 'src/enums/Role.enum';
+import { useUserStore } from 'src/stores/user-store';
 
 const fakeLoader = ref<boolean>(false);
 const isPwd = ref<boolean>(true); // for password field
@@ -194,6 +195,11 @@ const isPwdMatch = () =>
 
 const authStore = useAuthStore();
 const router = useRouter();
+const usersStore = useUserStore();
+
+onBeforeMount(async () => {
+  await usersStore.fetchCandidatList();
+});
 
 async function addUtilisateur(id: string, user: UserSignIn) {
   const addResult = await addDoc(collection(db, 'user'), user);
@@ -210,12 +216,20 @@ async function onSubmit() {
     .signIn(userSingIn)
     .then((user: User) => {
       addUtilisateur(user.uid, userSingIn).then(() => {
-        console.log('add is finished');
-        router.push({ name: 'dashboard' });
+        if (foundInCandidat(userSingIn.email)) {
+          router.push({ name: 'interview-home' });
+        } else {
+          router.push({ name: 'dashboard' });
+        }
       });
     })
     .finally(() => {
       setTimeout(() => (fakeLoader.value = false), 2000);
     });
+}
+
+function foundInCandidat(userEmail: string) {
+  const idx = usersStore.users.findIndex((el) => el.email === userEmail);
+  return idx > -1;
 }
 </script>

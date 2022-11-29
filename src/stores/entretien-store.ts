@@ -1,4 +1,10 @@
-import { collection, getDocs, getFirestore } from 'firebase/firestore/lite';
+import {
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  updateDoc,
+} from 'firebase/firestore/lite';
 import { defineStore } from 'pinia';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import { firebaseApp } from 'src/firebase';
@@ -46,6 +52,23 @@ export const useEntretienStore = defineStore('entretien', {
         } catch (error) {
           console.log('get all entretien error : ', error);
           reject(error);
+        }
+      });
+    },
+
+    updateEntretien(entretienItem: Entretien) {
+      return new Promise(async (resolve, reject) => {
+        this.isLoading = true;
+
+        try {
+          const docRef = doc(db, 'entretien', entretienItem.id);
+          await updateDoc(docRef, { ...entretienItem });
+          console.log('updated successfully');
+        } catch (err) {
+          console.log('update entretien error ', entretienItem);
+          reject(err);
+        } finally {
+          this.isLoading = false;
         }
       });
     },

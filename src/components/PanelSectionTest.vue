@@ -5,7 +5,10 @@
         <q-icon size="30px" color="primary" name="help_outline" />
       </q-item-section>
       <q-item-section>
-        <q-item-label class="text-h6">Question</q-item-label>
+        <q-item-label class="text-h6"
+          >Question
+          <span class="text-subtitle1">({{ test?.type }})</span></q-item-label
+        >
       </q-item-section>
       <div class="row items-center q-gutter-x-sm">
         <q-icon size="30px" color="primary" name="access_time" />

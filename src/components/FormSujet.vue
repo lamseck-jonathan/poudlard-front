@@ -96,7 +96,7 @@
       class="row"
       type="submit"
       color="blue-grey-7"
-      label="Ajouter"
+      :label="props.mode === CrudAction.CREATE ? 'Ajouter' : 'Modifier'"
       style="width: 98%"
     />
   </q-form>

@@ -184,6 +184,8 @@ async function updateUtilisateur(user: UserListing) {
 function onFormSubmit() {
   console.log('onFormSubmit', utilisateurModel.value);
   updateUtilisateur(utilisateurModel.value);
+
+  // userStore.users;  update list here
   closeModal();
 }
 </script>

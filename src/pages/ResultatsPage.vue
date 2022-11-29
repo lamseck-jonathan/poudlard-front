@@ -16,18 +16,23 @@
 
 <script lang="ts" setup>
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
-import { fakeEntretiensList } from 'src/data/fakeEntretiens.fake';
 import { CrudAction } from 'src/enums/CrudAction.enum';
+import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
 import { TestType } from 'src/enums/TestType.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Entretien } from 'src/model/Entretien.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { ReponseCandidat } from 'src/model/Reponse.interface';
+import { useEntretienStore } from 'src/stores/entretien-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { totalPoint } from 'src/utils/sujet.util';
 import { computed, onBeforeMount } from 'vue-demi';
 
-const allEntretien: Entretien[] = [...fakeEntretiensList];
+const entretienStore = useEntretienStore();
+
+onBeforeMount(() => {
+  entretienStore.getAllEntretien();
+});
 
 function handleContextMenuClick(itemMenu: ItemContextMenu, data: Entretien) {
   switch (itemMenu.event) {
@@ -39,9 +44,14 @@ function handleContextMenuClick(itemMenu: ItemContextMenu, data: Entretien) {
       break;
   }
 }
+const allAchievedEntretiens = computed(() => {
+  return entretienStore.entretiens.filter(
+    (el) => el.statut === EntretienStatut.ACHEVE
+  );
+});
 
 const rows = computed(() => {
-  return allEntretien.map((el) => ({
+  return allAchievedEntretiens.value.map((el) => ({
     candidat: `${el.candidat.nom} ${el.candidat.prenom}`,
     email: el.candidat.email,
     date: el.date,

@@ -18,6 +18,13 @@
         @submit.prevent="sendEmail()"
       >
         <div class="text-h6 q-mb-sm">Voudriez-vous faire un retour ?</div>
+
+        <input
+          type="hidden"
+          name="contact"
+          :value="entretienStore.currentInterview.candidat.email"
+        />
+
         <q-input
           v-model="retourModel"
           type="textarea"
@@ -46,12 +53,15 @@
 <script lang="ts" setup>
 import emailjs from '@emailjs/browser';
 import { QForm } from 'quasar';
+import { useEntretienStore } from 'src/stores/entretien-store';
 import { ref } from 'vue';
 
 const retourModel = ref<string>('');
 const isRetourSent = ref<boolean>(false);
 const formRef = ref<QForm>();
 const retourIsLoading = ref<boolean>(false);
+
+const entretienStore = useEntretienStore();
 
 function sendEmail() {
   retourIsLoading.value = true;

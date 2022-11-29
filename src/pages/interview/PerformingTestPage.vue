@@ -41,6 +41,7 @@ import { ReponseCandidat } from 'src/model/Reponse.interface';
 import { onBeforeMount, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useEntretienStore } from 'src/stores/entretien-store';
+import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
 
 const counter = ref<number>(0);
 const currentTest = ref<Test>({} as Test);
@@ -70,8 +71,11 @@ function displayNextTest() {
     initCurrentTest();
     initAnswerModel(currentTest.value);
   } else {
-    console.log('resultat : ', reponseCandidats);
+    entretienStore.currentInterview.reponseCandidat = reponseCandidats;
+
     // modifié le sujet (ajouter les reponses de tests et statut = achevé)
+    entretienStore.currentInterview.statut = EntretienStatut.ACHEVE; // Plus tard.
+    entretienStore.updateEntretien(entretienStore.currentInterview);
     router.push({ name: 'interview-finished' });
   }
 }

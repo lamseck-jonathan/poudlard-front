@@ -30,3 +30,31 @@
   font-family: 'OpenSans Bold';
   src: url(src/assets/fonts/OpenSans-Bold.ttf);
 }
+
+.neo_toast {
+  background-color: white;
+
+  div {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .q-notification__caption {
+    color: #44484e;
+    font-weight: normal;
+    text-transform: none;
+  }
+
+  &_SUCCESS {
+    border-left: 6px solid rgb(68, 180, 68);
+  }
+  &_INFO {
+    border-left: 6px solid rgb(33, 114, 253);
+  }
+  &_ERROR {
+    border-left: 6px solid rgb(250, 56, 88);
+  }
+  &_WARNING {
+    border-left: 6px solid yellow;
+  }
+}

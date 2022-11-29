@@ -18,6 +18,8 @@ import {
   where,
 } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
 
 const db = getFirestore(firebaseApp);
 const userCollection = collection(db, 'user');
@@ -40,11 +42,16 @@ export const useAuthStore = defineStore('auth', {
           .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
-            console.log('sign in successfully', user);
+            useToast('Succès', 'Connexion réussie', ToastType.SUCCESS);
 
             resolve(user);
           })
           .catch((error) => {
+            useToast(
+              'Erreur',
+              "Une erreur s'est produit lors du traitement",
+              ToastType.ERROR
+            );
             console.log('sign in error', error);
             reject(error);
           })
@@ -80,7 +87,7 @@ export const useAuthStore = defineStore('auth', {
           .then(async (userCredential) => {
             const user = userCredential.user;
             userSignIn.role = Role.CANDIDAT;
-            // await userStore.addUtilisateur(userCredential.user.uid, userSignIn);
+            useToast('Succès', 'Inscription réussie', ToastType.SUCCESS);
             resolve(user);
           })
           .catch((err) => {
@@ -97,9 +104,13 @@ export const useAuthStore = defineStore('auth', {
         const auth = getAuth();
 
         signOut(auth)
-          .then(() => resolve(null))
+          .then(() => {
+            useToast('Succès', 'Déconnecté avec succès', ToastType.SUCCESS);
+            resolve(null);
+          })
           .catch((err) => {
             console.log('signout error : ', err);
+
             reject(err);
           })
           .finally(() => (this.isLoading = false));

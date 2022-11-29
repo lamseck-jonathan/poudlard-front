@@ -86,7 +86,25 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-framework
     framework: {
-      config: {},
+      config: {
+        notify: {
+          position: 'top-right',
+          textColor: 'black',
+          actions: [
+            {
+              icon: 'cancel',
+              color: 'red-5',
+              fabMini: true,
+            },
+          ],
+        },
+        loading: {
+          boxClass: 'bg-grey-2 text-grey-8 flex-center loading_popup',
+          spinnerColor: 'primary',
+          spinnerSize: 50,
+          message: 'Chargement...',
+        },
+      },
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
@@ -99,7 +117,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog'],
+      plugins: ['Dialog', 'Notify', 'Loading'],
     },
 
     // animations: 'all', // --- includes all animations
