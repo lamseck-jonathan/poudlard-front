@@ -109,7 +109,7 @@
         label="Ajouter une ligne de choix"
         style="width: 100%"
         outline
-        @click="addNewChoix"
+        @click="addNewChoix()"
       />
 
       <template v-for="c in testModel.choix" :key="c.id">
@@ -280,7 +280,7 @@ function addNewChoix() {
 
   if (choiceLength < 4) {
     testModel.value.choix?.push({
-      id: testModel.value.choix.length + 1,
+      id: Date.now(),
       reponse: '',
       isTrue: false,
     });
