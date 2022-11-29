@@ -108,16 +108,24 @@ import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Sujet, SujetListing } from 'src/model/Sujet.interface';
 import { User } from 'src/model/User.interface';
 import { useEntretienStore } from 'src/stores/entretien-store';
+import { useSujetStore } from 'src/stores/sujet-store';
 import { useUserStore } from 'src/stores/user-store';
 import { totalDuree, totalPoint } from 'src/utils/sujet.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { required } from 'src/utils/validationRules.util';
-import { computed } from 'vue';
+import { computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 
 const emit = defineEmits(['submit']);
 const entretienStore = useEntretienStore();
 const userStore = useUserStore();
+const sujetStore = useSujetStore();
+
+onBeforeMount(() => {
+  sujetStore.fetchSujetList();
+  userStore.fetchCandidatList();
+});
+
 const entretienStatutOptions: EntretienStatut[] = [
   EntretienStatut.EN_COURS,
   EntretienStatut.ANNULE,
@@ -153,10 +161,8 @@ const candidatColumns: DatagridColumns[] = [
 
 /*---------------- Candidat ----------------*/
 
-userStore.fetchCandidatList();
-console.log(userStore.users);
 const candidatRows = computed(() => {
-  const allCandidats = userStore.users.filter((user) => {
+  const allCandidats = userStore.candidats.filter((user) => {
     return user.actif;
   });
 
@@ -207,7 +213,7 @@ const sujetColumns: DatagridColumns[] = [
 ];
 
 const sujetRows = computed((): SujetListing[] => {
-  return [...fakeSujetList].map((sujet) => ({
+  return sujetStore.sujets.map((sujet) => ({
     id: sujet.id,
     titre: sujet.titre,
     description: sujet.description,
