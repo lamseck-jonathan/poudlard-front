@@ -58,7 +58,12 @@ watch(
           if (mainLayoutStore.currentUser.role === Role.CANDIDAT) {
             router.push({ name: 'interview-home' });
           } else {
-            router.push({ name: 'dashboard' });
+            const currentRouteName = router.currentRoute.value.name;
+            if (currentRouteName) {
+              router.push({ name: currentRouteName });
+            } else {
+              router.push({ name: 'dashboard' });
+            }
           }
         } else {
           mainLayoutStore.currentUser.nom = 'Doe';
