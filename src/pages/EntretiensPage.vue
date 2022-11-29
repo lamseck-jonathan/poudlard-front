@@ -5,6 +5,7 @@
       :columns="columns"
       :rows="rows"
       @click:add="onAdd"
+      @click:delete="onDeleteEntretien"
       @click:context-item="
         ({ itemMenu, data }) => handleContextMenuClick(itemMenu, data)
       "
@@ -15,27 +16,35 @@
 </template>
 
 <script lang="ts" setup>
+import { deleteDoc, doc, getFirestore } from 'firebase/firestore/lite';
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
+import { useConfirmationPopup } from 'src/composables/Popup.composable';
 import { CrudAction } from 'src/enums/CrudAction.enum';
+import { PopupButton } from 'src/enums/Popup.enum';
+import { firebaseApp } from 'src/firebase';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Entretien } from 'src/model/Entretien.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { useEntretienStore } from 'src/stores/entretien-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
-import { computed, onMounted } from 'vue';
+import { computed, onBeforeMount, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const entretienStore = useEntretienStore();
 const mainLayoutStore = useMainLayoutStore();
+const db = getFirestore(firebaseApp);
 
-onMounted(() => {
-  mainLayoutStore.setNavBarpageInfo({
-    icon: 'present_to_all',
-    title: 'entretien',
-    routeName: 'entretiens  ',
-    path: '/entretiens',
+onBeforeMount(() => {
+  entretienStore.fetchEntretienList();
+}),
+  onMounted(() => {
+    mainLayoutStore.setNavBarpageInfo({
+      icon: 'present_to_all',
+      title: 'entretien',
+      routeName: 'entretiens  ',
+      path: '/entretiens',
+    });
   });
-});
 
 const router = useRouter();
 
@@ -95,8 +104,23 @@ const columns: DatagridColumns[] = [
   },
 ];
 
-entretienStore.fetchEntretienList();
 const rows = computed<Entretien[]>(() => {
   return entretienStore.entretiens as Entretien[];
 });
+
+/**
+ * @desc handle on delete test
+ */
+function onDeleteEntretien(entretien: Entretien) {
+  const { confirmationPopup } = useConfirmationPopup(
+    'Confirmation',
+    'Voulez vous vraiment supprimer définitivement cette élément de la base ?'
+  );
+
+  confirmationPopup.onOk(async ({ clicked }) => {
+    if (clicked === PopupButton.YES) {
+      await deleteDoc(doc(db, 'entretien', entretien.id));
+    }
+  });
+}
 </script>

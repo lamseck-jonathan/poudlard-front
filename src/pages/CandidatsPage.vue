@@ -42,6 +42,7 @@ onMounted(() => {
 onBeforeMount(() => {
   userStore.fetchCandidatList();
   ficheCandidatStore.getAllFicheCandidats();
+  userStore.fetchCandidatList();
 });
 
 /*--------------- Crud operation -------------*/
@@ -149,6 +150,6 @@ const columns: DatagridColumns[] = [
 ];
 
 const users = computed<UserListing[]>(() => {
-  return userStore.users as UserListing[];
+  return userStore.candidats as UserListing[];
 });
 </script>

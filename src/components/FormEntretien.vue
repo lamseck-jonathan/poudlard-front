@@ -102,7 +102,6 @@ import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import EntretienDisplayCandidatItem from 'src/components/EntretienDisplayCandidatItem.vue';
 import EntretienDisplaySujetItem from 'src/components/EntretienDisplaySujetItem.vue';
 import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
-import { Role } from 'src/enums/Role.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Sujet, SujetListing } from 'src/model/Sujet.interface';
 import { User } from 'src/model/User.interface';
@@ -119,6 +118,12 @@ const emit = defineEmits(['submit']);
 const entretienStore = useEntretienStore();
 const userStore = useUserStore();
 const sujetStore = useSujetStore();
+
+onBeforeMount(() => {
+  sujetStore.fetchSujetList();
+  userStore.fetchCandidatList();
+});
+
 const entretienStatutOptions: EntretienStatut[] = [
   EntretienStatut.EN_COURS,
   EntretienStatut.ANNULE,
@@ -154,21 +159,10 @@ const candidatColumns: DatagridColumns[] = [
 
 /*---------------- Candidat ----------------*/
 
-onBeforeMount(() => {
-  userStore.fetchCandidatList();
-  sujetStore.fetchSujetList();
-});
-
 const candidatRows = computed(() => {
-  let allCandidats: User[] = [];
-
-  if (userStore.users) {
-    allCandidats = userStore.users.filter((user) => {
-      return user.actif && user.role === Role.CANDIDAT;
-    });
-  }
-
-  console.log('all candidats', allCandidats);
+  const allCandidats = userStore.candidats.filter((user) => {
+    return user.actif;
+  });
 
   return allCandidats;
 });
