@@ -45,11 +45,9 @@
           <q-item-section class="navbar_title text-gray">
             <q-item-label class="user_name text-uppercase text-weight-bold">
               {{
-                mainLayoutStore.currentUser
-                  ? `${mainLayoutStore.currentUser.prenom || ''} ${
-                      mainLayoutStore.currentUser.nom || ''
-                    }`
-                  : 'Chargement ...'
+                mainLayoutStore.currentUser.prenom +
+                ' ' +
+                mainLayoutStore.currentUser.nom
               }}
             </q-item-label>
           </q-item-section>
@@ -105,6 +103,7 @@ import { PopupButton } from 'src/enums/Popup.enum';
 import { SideBarMenu } from 'src/model/SideBarMenu.interface';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
+import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 
 const menuItems: SideBarMenu[] = [
@@ -155,6 +154,14 @@ const menuItems: SideBarMenu[] = [
 const mainLayoutStore = useMainLayoutStore();
 const authStore = useAuthStore();
 const router = useRouter();
+
+onBeforeMount(() => {
+  authStore.getCurrentUser().then((user) => {
+    if (user) {
+      mainLayoutStore.currentUser = user;
+    }
+  });
+});
 
 function onDeconnexion() {
   const { confirmationPopup } = useConfirmationPopup(

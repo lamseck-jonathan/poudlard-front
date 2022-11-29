@@ -1,6 +1,6 @@
 <template>
   <q-table
-    v-model:pagination="mainLayoutStore.pagination"
+    v-model:pagination="pagination"
     class="neo_datagrid full-width"
     :separator="props.separator"
     :filter="filter"
@@ -140,8 +140,8 @@
           label-color="white"
           emit-value
           map-options
-          :model-value="mainLayoutStore.pagination.rowsPerPage"
-          @update:model-value="(evt:any) => mainLayoutStore.setRowsPerPage(evt)"
+          :model-value="pagination.rowsPerPage"
+          @update:model-value="(evt:any) => pagination.rowsPerPage = evt"
           :options="[
             { label: '5', value: 5 },
             { label: '10', value: 10 },
@@ -155,7 +155,7 @@
       </div>
 
       <q-pagination
-        v-model="mainLayoutStore.pagination.page"
+        v-model="pagination.page"
         :boundary-numbers="false"
         :max="pagesNumber"
         :max-pages="4"
@@ -179,12 +179,9 @@
 <script lang="ts" setup>
 import BaseContextMenu from './BaseContextMenu.vue';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
-import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { computed, PropType, ref } from 'vue';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
 import { CrudAction } from 'src/enums/CrudAction.enum';
-
-const mainLayoutStore = useMainLayoutStore();
 
 const emit = defineEmits([
   'click:add',
@@ -195,10 +192,21 @@ const emit = defineEmits([
 
 const filter = ref<string>('');
 const isCompactMode = ref<boolean>(false);
+const pagination = ref<{
+  sortBy: 'desc' | 'asc';
+  descending: boolean;
+  page: number;
+  rowsPerPage: number;
+}>({
+  sortBy: 'desc',
+  descending: false,
+  page: 1,
+  rowsPerPage: 5,
+});
 
 const pagesNumber = computed(() =>
-  mainLayoutStore.pagination.rowsPerPage !== 0
-    ? Math.ceil(props.rows.length / mainLayoutStore.pagination.rowsPerPage)
+  pagination.value.rowsPerPage !== 0
+    ? Math.ceil(props.rows.length / pagination.value.rowsPerPage)
     : 1
 );
 

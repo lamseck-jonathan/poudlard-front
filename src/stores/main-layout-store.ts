@@ -4,7 +4,7 @@ import { User } from 'src/model/User.interface';
 
 export const useMainLayoutStore = defineStore('mainLayout', {
   state: () => ({
-    currentUser: <User>{},
+    currentUser: <User>{ nom: 'Previdente', prenom: 'yannick' },
     navbarPageInfo: <SideBarMenu>{
       icon: 'dashboard',
       title: 'dashboard',

@@ -95,7 +95,7 @@ function onSubmit() {
     .then(() => {
       console.log('user is connecte', authStore.userIsConnected);
 
-      if (userLogin.email === 'tafita.raza@email.com') {
+      if (userLogin.email === 'tafita.raza1@gmail.com') {
         router.push({ name: 'interview-home' });
       } else {
         router.push({ name: 'dashboard' });

@@ -1,6 +1,5 @@
 import { collection, getDocs, getFirestore } from 'firebase/firestore/lite';
 import { defineStore } from 'pinia';
-import { fakeEntretiensList } from 'src/data/fakeEntretiens.fake';
 import { CrudAction } from 'src/enums/CrudAction.enum';
 import { firebaseApp } from 'src/firebase';
 import { Entretien } from 'src/model/Entretien.interface';
@@ -13,6 +12,8 @@ export const useEntretienStore = defineStore('entretien', {
     entretiens: <Entretien[]>[],
     crudAction: <CrudAction>'',
     FormEntretien: <Entretien>{},
+    currentInterview: <Entretien>{},
+    isLoading: false,
   }),
 
   getters: {
@@ -21,9 +22,6 @@ export const useEntretienStore = defineStore('entretien', {
   },
 
   actions: {
-    getAllEntretien() {
-      this.entretiens = [...fakeEntretiensList];
-    },
     async fetchEntretienList() {
       const entretienSnapshot = await getDocs(entretienCollection);
       const entretienList = entretienSnapshot.docs.map((doc) =>
@@ -31,6 +29,25 @@ export const useEntretienStore = defineStore('entretien', {
       ) as Entretien[];
       this.entretiens = entretienList;
       console.log(this.entretiens);
+    },
+
+    getAllEntretien() {
+      return new Promise(async (resolve, reject) => {
+        this.isLoading = true;
+
+        try {
+          const entretienSnapshot = await getDocs(entretienCollection);
+          const entretienList = entretienSnapshot.docs.map((doc) =>
+            doc.data()
+          ) as Entretien[];
+
+          this.entretiens = entretienList;
+          resolve(this.entretiens);
+        } catch (error) {
+          console.log('get all entretien error : ', error);
+          reject(error);
+        }
+      });
     },
   },
 });

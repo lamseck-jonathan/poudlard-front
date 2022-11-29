@@ -26,7 +26,7 @@
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import BaseModal from 'src/components/BaseModal.vue';
 import FormSujet from '../components/FormSujet.vue';
-import { computed, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useConfirmationPopup } from 'src/composables/Popup.composable';
 import { PopupButton } from 'src/enums/Popup.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
@@ -55,6 +55,10 @@ import { totalDuree, totalPoint } from 'src/utils/sujet.util';
 const mainLayoutStore = useMainLayoutStore();
 const sujetStore = useSujetStore();
 const db = getFirestore(firebaseApp);
+
+onBeforeMount(() => {
+  sujetStore.fetchSujetList();
+});
 
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
@@ -101,7 +105,7 @@ const columns: DatagridColumns[] = [
 ];
 
 /*-------- Listing Operation --------*/
-sujetStore.fetchSujetList();
+
 const sujetList = computed(() => {
   return sujetStore.sujets;
 });

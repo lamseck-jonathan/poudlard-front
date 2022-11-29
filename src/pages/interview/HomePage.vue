@@ -1,7 +1,7 @@
 <template>
   <q-page class="row justify-center items-center q-pt-md">
     <!-- Si le candidat n'a aucun test à effectué -->
-    <q-card v-if="false" flat>
+    <q-card v-if="!sujetModel" flat>
       <q-card-section>
         <span class="text-h5 text-weight-bold q-mb-lg"
           >Vous avez aucun test à effectuer!</span
@@ -12,7 +12,7 @@
     </q-card>
 
     <!-- Si un sujet est prêt pour le candidat -->
-    <div v-if="true" class="width-fulls">
+    <div v-if="sujetModel" class="width-fulls">
       <div class="text-h5 text-weight-bold q-mb-lg">Votre test est prêt!</div>
 
       <interview-display-sujet class="q-mb-lg bg-grey-" :sujet="sujetModel" />
@@ -40,15 +40,35 @@
 
 <script lang="ts" setup>
 import InterviewDisplaySujet from 'src/components/InterviewDisplaySujet.vue';
-import { fakeSujetList } from 'src/data/sujets.fake';
 import { Sujet } from 'src/model/Sujet.interface';
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useEntretienStore } from 'src/stores/entretien-store';
+// import { useMainLayoutStore } from 'src/stores/main-layout-store';
+import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
 
 const router = useRouter();
-const sujetModel = ref<Sujet>({ ...fakeSujetList[0] });
+const sujetModel = ref<Sujet>();
+const entretienStore = useEntretienStore();
+// const mainLayoutStore = useMainLayoutStore();
+
+onBeforeMount(() => {
+  entretienStore.getAllEntretien().then(() => {
+    const entretiensDispos = entretienStore.entretiens.filter((el) => {
+      return (
+        el.candidat.email === 'tafita.raza1@gmail.com' &&
+        el.statut === EntretienStatut.EN_COURS
+      );
+    });
+
+    if (entretiensDispos.length > 0) {
+      sujetModel.value = entretiensDispos[0].sujet;
+      entretienStore.currentInterview = entretiensDispos[0];
+    }
+  });
+});
 
 function onCommencer() {
-  router.push('/interview/performing');
+  router.push({ name: 'performing-test' });
 }
 </script>

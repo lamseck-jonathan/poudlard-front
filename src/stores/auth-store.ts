@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { UserLogin, UserSignIn } from 'src/model/User.interface';
+import { UserListing, UserLogin, UserSignIn } from 'src/model/User.interface';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -10,12 +10,24 @@ import {
   User,
 } from 'firebase/auth';
 import { Role } from 'src/enums/Role.enum';
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from 'firebase/firestore/lite';
+import { firebaseApp } from 'src/firebase';
+
+const db = getFirestore(firebaseApp);
+const userCollection = collection(db, 'user');
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     auth: <Auth>{}, // reference of fire Auth service
     isLoading: false,
     userIsConnected: false,
+    currentUserIsLoading: false,
   }),
 
   actions: {
@@ -91,6 +103,34 @@ export const useAuthStore = defineStore('auth', {
             reject(err);
           })
           .finally(() => (this.isLoading = false));
+      });
+    },
+
+    getCurrentUser(): Promise<UserListing> {
+      return new Promise(async (resolve, reject) => {
+        this.currentUserIsLoading = true;
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        try {
+          if (user) {
+            const queryResult = query(
+              userCollection,
+              where('email', '==', user.email)
+            );
+
+            const userSnapShot = await getDocs(queryResult);
+            const userFound = userSnapShot.docs.map((doc) =>
+              doc.data()
+            ) as UserListing[];
+
+            resolve(userFound[0]);
+          } else {
+            reject('user not found');
+          }
+        } catch (error) {
+          reject(error);
+        }
       });
     },
   },
