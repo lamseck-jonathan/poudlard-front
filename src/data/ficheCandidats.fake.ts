@@ -6,14 +6,18 @@ import { FicheCandidat } from 'src/model/FicheCandidat.interface';
 
 export const fakeFicheCandidats: FicheCandidat[] = [
   {
-    id: '3',
-    nom: 'JEAN MARC',
-    prenom: 'Leon',
-    role: Role.CANDIDAT,
-    adresse: 'Andrefanambohijanahary Antananarivo',
-    email: 'leon@email.com',
-    telephone: '0344745682',
-    actif: true,
+    id: 'mlkjsdifqz',
+    id_user: '3',
+    user: {
+      id: '3',
+      nom: 'JEAN MARC',
+      prenom: 'Leon',
+      role: Role.CANDIDAT,
+      adresse: 'Andrefanambohijanahary Antananarivo',
+      email: 'leon@email.com',
+      telephone: '0344745682',
+      actif: true,
+    },
     niveauAcademique: {
       diplome: Diplome.MASTER,
       date: '2022-02-02',
