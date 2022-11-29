@@ -166,7 +166,7 @@ const totalDuree = computed(() => {
   let sujetDuree = 0;
 
   sujetModel.value.tests.forEach((test) => {
-    sujetDuree += test.duree;
+    sujetDuree += Number(test.duree);
   });
 
   return sujetDuree;
@@ -176,7 +176,7 @@ const totalPoint = computed(() => {
   let sujetPoint = 0;
 
   sujetModel.value.tests.forEach((test) => {
-    sujetPoint += test.bareme;
+    sujetPoint += Number(test.bareme);
   });
 
   return sujetPoint;
