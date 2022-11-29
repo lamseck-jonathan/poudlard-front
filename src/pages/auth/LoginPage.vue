@@ -8,7 +8,7 @@
     </div>
 
     <q-form
-      v-if="!authIsLoading"
+      v-if="!authStore.isLoading && !fakeLoader"
       @submit.stop="onSubmit"
       class="q-mt-md q-gutter-y-md"
       style="width: 300px"
@@ -72,36 +72,38 @@
 import { UserLogin } from 'src/model/User.interface';
 import { reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuthStore } from 'src/stores/auth-store';
+import { useRouter } from 'vue-router';
 
-const authIsLoading = ref<boolean>(false);
 const isPwd = ref<boolean>(true); // for password field
 const userLogin = reactive<UserLogin>({
   email: '',
   password: '',
 });
 
+const fakeLoader = ref<boolean>(false);
+const router = useRouter();
+const authStore = useAuthStore();
+
 /**
  * @desc Submit form
  */
 function onSubmit() {
-  authIsLoading.value = true;
-  const auth = getAuth();
-  signInWithEmailAndPassword(auth, userLogin.email, userLogin.password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      console.log(user);
+  fakeLoader.value = true;
+  authStore
+    .login(userLogin)
+    .then(() => {
+      console.log('user is connecte', authStore.userIsConnected);
+
+      if (userLogin.email === 'tafita.raza@email.com') {
+        router.push({ name: 'interview-home' });
+      } else {
+        router.push({ name: 'dashboard' });
+      }
     })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode + errorMessage);
+    .finally(() => {
+      setTimeout(() => (fakeLoader.value = false), 2000);
     });
-  setTimeout(() => {
-    console.log('connected with : ', userLogin);
-    authIsLoading.value = false;
-  }, 3000);
 }
 </script>
 

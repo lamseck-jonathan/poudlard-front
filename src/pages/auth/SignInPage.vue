@@ -6,7 +6,7 @@
         style="width: 300px"
       />
     </div>
-    <q-form v-if="!authIsLoading" @submit.stop="onSubmit">
+    <q-form v-if="!authStore.isLoading && !fakeLoader" @submit.stop="onSubmit">
       <q-card flat bordered>
         <q-card-section>
           <div class="text-bold text-uppercase">Formulaire d'Inscription</div>
@@ -157,8 +157,7 @@
 import { reactive, ref } from 'vue';
 import { required, isValidEmail } from 'src/utils/validationRules.util';
 import { UserSignIn } from 'src/model/User.interface';
-import { Role } from 'src/enums/Role.enum';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { User } from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -167,8 +166,10 @@ import {
   updateDoc,
 } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
+import { useAuthStore } from 'src/stores/auth-store';
+import { useRouter } from 'vue-router';
 
-const authIsLoading = ref<boolean>(false);
+const fakeLoader = ref<boolean>(false);
 const isPwd = ref<boolean>(true); // for password field
 const db = getFirestore(firebaseApp);
 
@@ -187,6 +188,9 @@ const isPwdMatch = () =>
   userSingIn.mdp === userSingIn.mdpVerif ||
   'Les mots de passent ne se correspondent pas';
 
+const authStore = useAuthStore();
+const router = useRouter();
+
 async function addUtilisateur(id: string, user: UserSignIn) {
   const addResult = await addDoc(collection(db, 'user'), user);
   const docRef = doc(db, 'user', addResult.id);
@@ -196,19 +200,18 @@ async function addUtilisateur(id: string, user: UserSignIn) {
   });
 }
 
-function onSubmit() {
-  authIsLoading.value = true;
-  const auth = getAuth();
-  createUserWithEmailAndPassword(auth, userSingIn.email, userSingIn.mdp).then(
-    (userCredential) => {
-      const user = userCredential.user;
-      userSingIn.role = Role.CANDIDAT;
-      addUtilisateur(userCredential.user.uid, userSingIn);
-      console.log(user);
-    }
-  );
-  setTimeout(() => {
-    authIsLoading.value = false;
-  }, 2000);
+async function onSubmit() {
+  fakeLoader.value = true;
+  authStore
+    .signIn(userSingIn)
+    .then((user: User) => {
+      addUtilisateur(user.uid, userSingIn).then(() => {
+        console.log('add is finished');
+        router.push({ name: 'dashboard' });
+      });
+    })
+    .finally(() => {
+      setTimeout(() => (fakeLoader.value = false), 2000);
+    });
 }
 </script>
