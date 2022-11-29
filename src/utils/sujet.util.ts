@@ -7,7 +7,7 @@ export function totalDuree(tests: Test[]) {
   let totalDuree = 0;
 
   for (const test of tests) {
-    totalDuree += test.duree;
+    totalDuree += Number(test.duree);
   }
 
   return totalDuree;
@@ -20,7 +20,7 @@ export function totalPoint(tests: Test[]) {
   let totalPoint = 0;
 
   for (const test of tests) {
-    totalPoint += test.bareme;
+    totalPoint += Number(test.bareme);
   }
 
   return totalPoint;
