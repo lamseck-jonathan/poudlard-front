@@ -44,7 +44,11 @@
           </q-item-section>
           <q-item-section class="navbar_title text-gray">
             <q-item-label class="user_name text-uppercase text-weight-bold">
-              {{ 'Tafita' + ' ' + 'Raza' }}
+              {{
+                mainLayoutStore.currentUser.prenom
+                  ? `${mainLayoutStore.currentUser.prenom} ${mainLayoutStore.currentUser.nom}`
+                  : 'Chargement ...'
+              }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -70,7 +74,7 @@
       <q-item
         class="text-blue__dark item-menu fixed-bottom q-mb-sm"
         active-class="text-primary"
-        :to="'auth/login'"
+        @click="onDeconnexion"
         clickable
       >
         <q-item-section avatar>
@@ -94,8 +98,12 @@
 </template>
 
 <script setup lang="ts">
+import { useConfirmationPopup } from 'src/composables/Popup.composable';
+import { PopupButton } from 'src/enums/Popup.enum';
 import { SideBarMenu } from 'src/model/SideBarMenu.interface';
+import { useAuthStore } from 'src/stores/auth-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
+import { useRouter } from 'vue-router';
 
 const menuItems: SideBarMenu[] = [
   {
@@ -143,6 +151,23 @@ const menuItems: SideBarMenu[] = [
 ];
 
 const mainLayoutStore = useMainLayoutStore();
+const authStore = useAuthStore();
+const router = useRouter();
+
+function onDeconnexion() {
+  const { confirmationPopup } = useConfirmationPopup(
+    'Confirmation',
+    'Voulez vous vraiment vous déconnecté ?'
+  );
+
+  confirmationPopup.onOk(({ clicked }) => {
+    if (clicked === PopupButton.YES) {
+      authStore.logout().then(() => {
+        router.push({ name: 'login' });
+      });
+    }
+  });
+}
 </script>
 
 <style lang="scss">
