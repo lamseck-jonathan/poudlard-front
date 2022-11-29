@@ -23,6 +23,7 @@ export interface UserSignIn {
   role: string;
   adresse: string;
   telephone: string;
+  actif: boolean;
   mdp: string;
   mdpVerif: string;
 }
