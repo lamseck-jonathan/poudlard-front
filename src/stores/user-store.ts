@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia';
-import { User } from 'src/model/User.interface';
+import { User, UserSignIn } from 'src/model/User.interface';
 import {
   getFirestore,
   collection,
   getDocs,
   where,
   query,
+  addDoc,
+  doc,
+  updateDoc,
 } from 'firebase/firestore/lite';
 import { firebaseApp } from 'src/firebase';
 import { Role } from 'src/enums/Role.enum';
@@ -39,6 +42,15 @@ export const useUserStore = defineStore('user', {
       const userList = userSnapshot.docs.map((doc) => doc.data()) as User[];
       this.users = userList;
       console.log(this.users);
+    },
+
+    async addUtilisateur(id: string, usersignIn: UserSignIn) {
+      const addResult = await addDoc(collection(db, 'user'), usersignIn);
+      const docRef = doc(db, 'user', addResult.id);
+      await updateDoc(docRef, {
+        id: addResult.id,
+        uid: id,
+      });
     },
   },
 });
