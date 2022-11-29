@@ -8,19 +8,23 @@
     <!-------------- Start header ---------------->
     <div class="row">
       <div class="col-2 text-uppercase text-weight-bold">Nom :</div>
-      <div class="col">{{ ficheCandidatStore.formFicheCandidat.nom }}</div>
+      <div class="col">{{ ficheCandidatStore.formFicheCandidat.user.nom }}</div>
 
       <div class="col-2 text-uppercase text-weight-bold">Mail :</div>
-      <div class="col">{{ ficheCandidatStore.formFicheCandidat.email }}</div>
+      <div class="col">
+        {{ ficheCandidatStore.formFicheCandidat.user.email }}
+      </div>
     </div>
 
     <div class="row">
       <div class="col-2 text-uppercase text-weight-bold">Prénom(s) :</div>
-      <div class="col">{{ ficheCandidatStore.formFicheCandidat.prenom }}</div>
+      <div class="col">
+        {{ ficheCandidatStore.formFicheCandidat.user.prenom }}
+      </div>
 
       <div class="col-2 text-uppercase text-weight-bold">Téléphone :</div>
       <div class="col">
-        {{ ficheCandidatStore.formFicheCandidat.telephone }}
+        {{ ficheCandidatStore.formFicheCandidat.user.telephone }}
       </div>
     </div>
 
@@ -29,7 +33,7 @@
       <div class="text-uppercase text-weight-bold q-mr-lg">
         Poste Convoité :
       </div>
-      <div>Développeur Logiciel</div>
+      <div>Développeur</div>
     </div>
     <q-separator></q-separator>
     <!-------------- End header ---------------->
@@ -54,7 +58,7 @@
     <div class="flex items-center">
       <div class="q-mr-lg">Années d'expériences réelles en développement :</div>
       <q-input
-        class="col q-pr-sm"
+        class="col"
         v-model="ficheCandidatStore.formFicheCandidat.anneeExperienceReelle"
         type="number"
         :readonly="ficheCandidatStore.isInReadMode"
@@ -80,9 +84,18 @@
       />
 
       <q-input
-        class="col q-pr-sm"
+        class="col q-pl-sm"
         v-model="ficheCandidatStore.formFicheCandidat.niveauAcademique.date"
-        type="date"
+        :type="
+          ficheCandidatStore.formFicheCandidat.niveauAcademique.date
+            ? 'text'
+            : 'date'
+        "
+        :label="
+          ficheCandidatStore.formFicheCandidat.niveauAcademique.date
+            ? 'Date d\'obtention'
+            : ''
+        "
         :readonly="ficheCandidatStore.isInReadMode"
         hide-bottom-space
         outlined
@@ -102,7 +115,7 @@
       />
 
       <q-input
-        class="col q-pr-sm"
+        class="col q-pl-sm"
         v-model="ficheCandidatStore.formFicheCandidat.niveauAcademique.institut"
         label="Institut"
         :readonly="ficheCandidatStore.isInReadMode"
@@ -217,16 +230,43 @@ import BaseFormCompetence from './BaseFormCompetence.vue';
 import BaseFormLangue from './BaseFormLangue.vue';
 import { Competence } from 'src/model/FicheCandidat.interface';
 import { useFicheCandidatStore } from 'src/stores/fiche-candidat-store';
-import { onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount } from 'vue';
 import { SituationActuelle } from 'src/enums/SituationActuelle.enum';
 import { useRouter } from 'vue-router';
 import { Diplome } from 'src/enums/Diplome.enum';
 
 const router = useRouter();
 const ficheCandidatStore = useFicheCandidatStore();
-const competence1 = ref<Competence>(<Competence>{});
-const competence2 = ref<Competence>(<Competence>{});
-const competence3 = ref<Competence>(<Competence>{});
+
+const competence1 = computed({
+  get() {
+    return ficheCandidatStore.formFicheCandidat.competences[0];
+  },
+
+  set(newValue: Competence) {
+    ficheCandidatStore.formFicheCandidat.competences[0] = newValue;
+  },
+});
+
+const competence2 = computed({
+  get() {
+    return ficheCandidatStore.formFicheCandidat.competences[1];
+  },
+
+  set(newValue: Competence) {
+    ficheCandidatStore.formFicheCandidat.competences[1] = newValue;
+  },
+});
+
+const competence3 = computed({
+  get() {
+    return ficheCandidatStore.formFicheCandidat.competences[2];
+  },
+
+  set(newValue: Competence) {
+    ficheCandidatStore.formFicheCandidat.competences[2] = newValue;
+  },
+});
 
 const situationActuelleOptions: SituationActuelle[] = [
   SituationActuelle.EN_FREELANCE,
@@ -248,6 +288,9 @@ const diplomeOptions: Diplome[] = [
 ];
 
 onBeforeMount(() => {
+  ficheCandidatStore.initFormFicheCandidat();
+  ficheCandidatStore.getFicheCandidat(ficheCandidatStore.selectedCandidat.id);
+
   if (ficheCandidatStore.formFicheCandidat.competences) {
     ficheCandidatStore.formFicheCandidat.competences.forEach((comp, idx) => {
       switch (idx) {
@@ -272,14 +315,9 @@ function onAnnuler() {
   router.push({ name: 'candidat' });
 }
 
-function onSubmit() {
-  ficheCandidatStore.formFicheCandidat.competences = [
-    competence1.value,
-    competence2.value,
-    competence3.value,
-  ];
-  console.log(ficheCandidatStore.formFicheCandidat);
-  ficheCandidatStore.updateFicheCandidat();
+async function onSubmit() {
+  await ficheCandidatStore.updateFicheCandidat();
+  router.push({ name: 'candidat' });
 }
 
 function displayInvalidFormError() {
