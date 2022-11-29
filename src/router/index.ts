@@ -1,4 +1,5 @@
 import { route } from 'quasar/wrappers';
+import { useAuthStore } from 'src/stores/auth-store';
 import {
   createMemoryHistory,
   createRouter,
@@ -17,9 +18,13 @@ import routes from './routes';
  */
 
 export default route(function (/* { store, ssrContext } */) {
+  const authStore = useAuthStore();
+
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
+    : process.env.VUE_ROUTER_MODE === 'history'
+    ? createWebHistory
+    : createWebHashHistory;
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -31,6 +36,13 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(
       process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE
     ),
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Router.beforeEach(async (to, from) => {
+    authStore.checkUserIsConnected();
+
+    return true;
   });
 
   return Router;
