@@ -46,6 +46,7 @@ const reponse = reactive<Reponse>({
   isTrue: false,
 });
 const trueOrFalse = ref();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function onChange(value: any) {
   if (value == true) {
     trueOrFalse.value = 'true';
