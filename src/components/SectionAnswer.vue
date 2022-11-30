@@ -1,53 +1,60 @@
-<template>
-  <q-card class="q-px-md" style="height: 550px">
-    <q-item>
-      <q-item-section avatar>
-        <q-icon size="30px" color="primary" name="code" />
-      </q-item-section>
-
-      <q-item-section>
-        <q-item-label class="text-h6">Réponse</q-item-label>
-      </q-item-section>
-    </q-item>
-    <q-separator />
-    <q-card-section
-      class="flex justify-center items-center"
-      style="height: 440px"
-    >
-      <div v-if="test?.type.type_test === 'QCU' && test.choix !== undefined">
-        <RadioUniqueAnswer v-model="uniqueAnswer" :answers="test.choix" />
+<!-- <base-expandable-item>
+    <template #header>
+      <div class="col-4 text-left">{{ props.reponse?.test.titre }}</div>
+      <div class="col-4 text-center">{{ props.reponse?.test.categorie }}</div>
+      <div class="col-1 text-center">{{ props.reponse?.test.type }}</div>
+      <div class="col-1 text-center">{{ props.reponse?.test.bareme }}</div>
+      <div class="col-2 text-center">
+        {{ msToTime(props.reponse?.test.duree || 0) }}
       </div>
-      <div v-if="test?.type.type_test === 'QCM' && test.choix !== undefined">
-        <RadioMultipleAnswer v-model="selectedAnswers" :answers="test.choix" />
-      </div>
-      <div
-        style="width: 500px; height: 900px"
-        v-if="test?.type.type_test === 'QR'"
-      >
-        <q-input v-model="textAnswer" filled type="textarea" />
-      </div>
-    </q-card-section>
-    <q-separator />
-    <q-card-actions>
-      <q-btn class="full-width" label="Question Suivante" color="primary" />
-    </q-card-actions>
-  </q-card>
-</template>
+    </template>
 
-<script setup lang="ts">
-import { Test } from 'src/model/Test.interface';
-import { Reponse } from 'src/model/Reponse.interface';
-import RadioMultipleAnswer from './RadioMultipleAnswer.vue';
-import RadioUniqueAnswer from './RadioUniqueAnswer.vue';
-import { PropType, ref } from 'vue';
+    <template #body>
+      <q-card-section class="row" style="padding-bottom: 0.5rem">
+        <div class="col-3 q-pr-lg">
+          <div class="q-mb-sm">
+            <span class="text-weight-bold q-mr-lg">Id :</span>
+            <span class="text-justify">{{ props.reponse?.test.id }}</span>
+          </div>
 
-defineProps({
-  test: {
-    type: Object as PropType<Test>,
-    required: true,
-  },
-});
-const selectedAnswers = ref<Reponse[]>([] as Reponse[]);
-const uniqueAnswer = ref<Reponse>({} as Reponse);
-const textAnswer = ref<string>('');
-</script>
+          <div class="q-mb-sm">
+            <span class="text-weight-bold q-mr-lg">Titre :</span>
+            <span class="text-justify">{{ props.reponse?.test.titre }}</span>
+          </div>
+        </div>
+
+        <div class="col-3 q-pr-lg">
+          <div class="q-mb-sm">
+            <span class="text-weight-bold q-mr-lg">Type :</span>
+            <span class="text-justify">{{ props.reponse?.test.type }}</span>
+          </div>
+
+          <div class="q-mb-sm">
+            <span class="text-weight-bold q-mr-lg">Categorie :</span>
+            <span class="text-justify">{{
+              props.reponse?.test.categorie
+            }}</span>
+          </div>
+        </div>
+
+        <div class="col-4 q-pr-lg">
+          <div class="text-weight-bold q-mr-lg q-mb-sm">Description :</div>
+          <div>{{ props.reponse?.test.description }}</div>
+        </div>
+
+        <div class="col-2">
+          <div class="q-mb-sm">
+            <span class="text-weight-bold q-mr-lg">Point :</span>
+            <span class="text-justify">{{ props.reponse?.test.bareme }}</span>
+          </div>
+
+          <div class="q-mb-sm">
+            <span class="text-weight-bold q-mr-lg">Durée :</span>
+            <span class="text-justify">{{
+              msToTime(props.reponse?.test.duree || 0)
+            }}</span>
+          </div>
+        </div>
+      </q-card-section>
+    </template>
+  </base-expandable-item> -->

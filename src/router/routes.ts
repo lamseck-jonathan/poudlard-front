@@ -56,6 +56,11 @@ const routes: RouteRecordRaw[] = [
         name: 'resultats',
         component: () => import('pages/ResultatsPage.vue'),
       },
+      {
+        path: 'resultats/details',
+        name: 'see-result',
+        component: () => import('pages/resultat/detailsResultatPage.vue'),
+      },
     ],
   },
 

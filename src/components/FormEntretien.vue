@@ -79,10 +79,32 @@
       show-search-input
     />
 
+    <form ref="formRef" @submit.prevent="sendMail()">
+      <input
+        type="hidden"
+        name="to_email"
+        :value="entretienStore.FormEntretien.candidat.email"
+      />
+
+      <input
+        type="hidden"
+        name="to_name"
+        :value="entretienStore.FormEntretien.candidat.prenom"
+      />
+
+      <q-btn
+        v-if="entretienStore.isInReadMode"
+        class="row"
+        color="primary"
+        label="Notifier le candidat"
+        type="submit"
+      ></q-btn>
+    </form>
+
     <div class="row" style="margin-top: 2rem">
       <q-btn
         class="col bg-blue-grey-4 text-white q-mr-sm"
-        label="annuler"
+        :label="entretienStore.isInReadMode ? 'retour' : 'annuler'"
         @click="onAnnuler"
       />
 
@@ -101,7 +123,10 @@
 import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import EntretienDisplayCandidatItem from 'src/components/EntretienDisplayCandidatItem.vue';
 import EntretienDisplaySujetItem from 'src/components/EntretienDisplaySujetItem.vue';
+import { useLoadingPopup } from 'src/composables/Popup.composable';
+import { useToast } from 'src/composables/Toast.composable';
 import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
+import { ToastType } from 'src/enums/ToastType.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { Sujet, SujetListing } from 'src/model/Sujet.interface';
 import { User } from 'src/model/User.interface';
@@ -111,8 +136,9 @@ import { useUserStore } from 'src/stores/user-store';
 import { totalDuree, totalPoint } from 'src/utils/sujet.util';
 import { msToTime } from 'src/utils/timeConvertor.util';
 import { required } from 'src/utils/validationRules.util';
-import { computed, onBeforeMount } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import emailjs from '@emailjs/browser';
 
 const emit = defineEmits(['submit']);
 const entretienStore = useEntretienStore();
@@ -234,11 +260,38 @@ function onAnnuler() {
 
 function onSubmit() {
   emit('submit');
-  console.log('submit', entretienStore.FormEntretien);
 }
 
 function displayInvalidFormError() {
-  console.log('dipslay invalid form error');
+  useToast(
+    'Error',
+    'Veuillez corriger les erreurs dans les champs',
+    ToastType.ERROR
+  );
+}
+
+const formRef = ref<HTMLElement>();
+const { loadingPopup } = useLoadingPopup();
+
+function sendMail() {
+  loadingPopup.show();
+
+  emailjs
+    .sendForm(
+      'service_v2rkscu', // service ID
+      'template_6i37ebdd', // template ID
+      formRef.value,
+      'N74lDjcCiDXuYrvtV' // public Key
+    )
+    .then(
+      () => {
+        useToast('SUCCESS', 'Email envoyé avec succès', ToastType.SUCCESS);
+      },
+      () => {
+        useToast('ERROR', "Echec de l'envoi du mail", ToastType.ERROR);
+      }
+    )
+    .finally(() => loadingPopup.hide());
 }
 </script>
 

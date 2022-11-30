@@ -5,6 +5,7 @@
       :columns="columns"
       :rows="rows"
       :action-btn="false"
+      :context-menu-items="contextMenuItems"
       @click:context-item="
         ({ itemMenu, data }) => handleContextMenuClick(itemMenu, data)
       "
@@ -27,17 +28,29 @@ import { useEntretienStore } from 'src/stores/entretien-store';
 import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { totalPoint } from 'src/utils/sujet.util';
 import { computed, onBeforeMount } from 'vue-demi';
+import { useRouter } from 'vue-router';
 
 const entretienStore = useEntretienStore();
+const mainLayoutStore = useMainLayoutStore();
+const router = useRouter();
 
 onBeforeMount(() => {
   entretienStore.getAllEntretien();
+
+  mainLayoutStore.setNavBarpageInfo({
+    icon: 'mdi-clipboard-text-outline',
+    title: 'resultat',
+    routeName: 'resultats  ',
+    path: '/resultats',
+  });
 });
 
 function handleContextMenuClick(itemMenu: ItemContextMenu, data: Entretien) {
   switch (itemMenu.event) {
     case CrudAction.READ:
-      console.log('data', data);
+      entretienStore.selectedResultat = data;
+      console.log('selected ', entretienStore.selectedResultat);
+      router.push({ name: 'see-result' });
       break;
 
     default:
@@ -52,21 +65,27 @@ const allAchievedEntretiens = computed(() => {
 
 const rows = computed(() => {
   return allAchievedEntretiens.value.map((el) => ({
-    candidat: `${el.candidat.nom} ${el.candidat.prenom}`,
+    id: el.id,
+    dateLimite: el.dateLimite,
+    candidatLabel: `${el.candidat.nom} ${el.candidat.prenom}`,
     email: el.candidat.email,
     date: el.date,
     note: `${calcResultatNote([...(el.reponseCandidat || [])])} / ${totalPoint(
       el.sujet.tests
     )}`,
+    candidat: el.candidat,
+    statut: el.statut,
+    sujet: el.sujet,
+    reponseCandidat: el.reponseCandidat,
   }));
 });
 
 const columns: DatagridColumns[] = [
   {
-    name: 'candidat',
+    name: 'candidatLabel',
     label: 'Candidat',
     align: 'left',
-    field: (row) => row.candidat,
+    field: (row) => row.candidatLabel,
     sortable: true,
   },
   {
@@ -94,6 +113,7 @@ const columns: DatagridColumns[] = [
 
 function calcResultatNote(responses: ReponseCandidat[]) {
   let note = 0;
+  console.log('response', responses);
 
   for (const res of responses) {
     const { test } = res;
@@ -130,14 +150,12 @@ function calcResultatNote(responses: ReponseCandidat[]) {
   return note;
 }
 
-const mainLayoutStore = useMainLayoutStore();
-
-onBeforeMount(() => {
-  mainLayoutStore.setNavBarpageInfo({
-    icon: 'mdi-clipboard-text-outline',
-    title: 'resultat',
-    routeName: 'resultats  ',
-    path: '/resultats',
-  });
-});
+const contextMenuItems: ItemContextMenu[] = [
+  {
+    label: 'Voir les détails',
+    event: CrudAction.READ,
+    appendIcon: 'mdi-eye-outline',
+    isDisabled: false,
+  },
+];
 </script>

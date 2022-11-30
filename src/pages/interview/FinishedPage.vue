@@ -52,13 +52,12 @@
 
 <script lang="ts" setup>
 import emailjs from '@emailjs/browser';
-import { QForm } from 'quasar';
 import { useEntretienStore } from 'src/stores/entretien-store';
 import { ref } from 'vue';
 
 const retourModel = ref<string>('');
 const isRetourSent = ref<boolean>(false);
-const formRef = ref<QForm>();
+const formRef = ref<HTMLElement>();
 const retourIsLoading = ref<boolean>(false);
 
 const entretienStore = useEntretienStore();

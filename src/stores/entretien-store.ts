@@ -21,6 +21,7 @@ export const useEntretienStore = defineStore('entretien', {
     crudAction: <CrudAction>'',
     FormEntretien: <Entretien>{},
     currentInterview: <Entretien>{},
+    selectedResultat: <Entretien>{},
     isLoading: false,
   }),
 
