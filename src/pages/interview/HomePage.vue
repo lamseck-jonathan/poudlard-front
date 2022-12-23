@@ -46,6 +46,7 @@ import { useRouter } from 'vue-router';
 import { useEntretienStore } from 'src/stores/entretien-store';
 // import { useMainLayoutStore } from 'src/stores/main-layout-store';
 import { EntretienStatut } from 'src/enums/EntretienStatut.enum';
+import { getAuth } from '@firebase/auth';
 
 const router = useRouter();
 const sujetModel = ref<Sujet>();
@@ -53,12 +54,22 @@ const entretienStore = useEntretienStore();
 // const mainLayoutStore = useMainLayoutStore();
 
 onBeforeMount(() => {
-  entretienStore.getAllEntretien().then(() => {
+  entretienStore.getAllEntretien().then(async () => {
+    const auth = await getAuth();
+    const user = auth.currentUser;
+
     const entretiensDispos = entretienStore.entretiens.filter((el) => {
-      return (
-        el.candidat.email === 'tafita.raza1@gmail.com' &&
-        el.statut === EntretienStatut.EN_COURS
-      );
+      if (user) {
+        return (
+          el.candidat.email === user.email &&
+          el.statut === EntretienStatut.EN_COURS
+        );
+      } else {
+        return (
+          el.candidat.email === 'tafita.raza1@gmail.com' &&
+          el.statut === EntretienStatut.EN_COURS
+        );
+      }
     });
 
     if (entretiensDispos.length > 0) {

@@ -37,8 +37,6 @@
         v-if="props.test?.type === TestType.QR"
       >
         <q-input v-model="textAnswer" filled type="textarea" />
-
-        {{ JSON.stringify(selectedAnswers) }}
       </div>
     </q-card-section>
   </q-card>

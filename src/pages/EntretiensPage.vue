@@ -37,12 +37,13 @@ const mainLayoutStore = useMainLayoutStore();
 const db = getFirestore(firebaseApp);
 
 onBeforeMount(() => {
+  entretienStore.FormEntretien = <Entretien>{};
   entretienStore.fetchEntretienList();
 }),
   onMounted(() => {
     mainLayoutStore.setNavBarpageInfo({
       icon: 'present_to_all',
-      title: 'entretien',
+      title: 'entretiens',
       routeName: 'entretiens  ',
       path: '/entretiens',
     });

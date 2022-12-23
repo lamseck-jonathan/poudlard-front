@@ -6,6 +6,7 @@
       :rows="formattedSujetList"
       show-search-input
       use-context-menu
+      :loading="sujetStore.isLoading"
       @click:add="onAddSujet"
       @click:context-item="
         ({ itemMenu, data }) => handleContextMenuClick(itemMenu, data)
@@ -27,7 +28,10 @@ import CustomDatagrid from 'src/components/CustomDatagrid.vue';
 import BaseModal from 'src/components/BaseModal.vue';
 import FormSujet from '../components/FormSujet.vue';
 import { computed, onBeforeMount, ref } from 'vue';
-import { useConfirmationPopup } from 'src/composables/Popup.composable';
+import {
+  useConfirmationPopup,
+  useLoadingPopup,
+} from 'src/composables/Popup.composable';
 import { PopupButton } from 'src/enums/Popup.enum';
 import { DatagridColumns } from 'src/model/DatagridColumns.interface';
 import { ItemContextMenu } from 'src/model/ItemContextMenu.interface';
@@ -49,6 +53,10 @@ import {
 import { useSujetStore } from 'src/stores/sujet-store';
 import { firebaseApp } from 'src/firebase';
 import { totalDuree, totalPoint } from 'src/utils/sujet.util';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
+
+const { loadingPopup } = useLoadingPopup();
 
 /*-------- MainLayout Store --------*/
 
@@ -63,7 +71,7 @@ onBeforeMount(() => {
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
     icon: 'mdi-text-subject',
-    title: 'sujet',
+    title: 'sujets',
     routeName: 'sujets',
     path: '/sujets',
   });
@@ -111,6 +119,7 @@ const sujetList = computed(() => {
 });
 
 async function addSujet(sujetItem: Sujet) {
+  loadingPopup.show();
   const addResult = await addDoc(collection(db, 'sujet'), sujetItem);
   const docRef = doc(db, 'sujet', addResult.id);
   await updateDoc(docRef, {
@@ -119,14 +128,19 @@ async function addSujet(sujetItem: Sujet) {
   const docSnap = await getDoc(docRef);
   const newSujet: Sujet = docSnap.data() as Sujet;
   sujetStore.sujets.push(newSujet);
+  loadingPopup.hide();
+  useToast('Succès', 'Sujet créé avec succès', ToastType.SUCCESS);
   console.log(sujetStore.sujets);
 }
 
 async function updateSujet(sujetItem: Sujet) {
+  loadingPopup.show();
   const docRef = doc(db, 'sujet', sujetItem.id);
   await updateDoc(docRef, {
     ...sujetItem,
   });
+  loadingPopup.hide();
+  useToast('Succès', 'Sujet modifié avec succès', ToastType.SUCCESS);
 }
 
 const formattedSujetList = computed((): SujetListing[] => {
@@ -238,8 +252,10 @@ function deleteSujet(idSujet: string) {
       const idx = sujetList.value.findIndex((el) => el.id === idSujet);
 
       if (idx > -1) {
+        loadingPopup.show();
         await deleteDoc(doc(db, 'sujet', idSujet));
         sujetList.value.splice(idx, 1); // delete sujet from array
+        loadingPopup.hide();
       }
     }
   });

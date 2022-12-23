@@ -79,7 +79,7 @@
       show-search-input
     />
 
-    <form ref="formRef" @submit.prevent="sendMail()">
+    <form v-if="entretienStore.isInReadMode" ref="formRef" @submit.prevent="sendMail()">
       <input
         type="hidden"
         name="to_email"

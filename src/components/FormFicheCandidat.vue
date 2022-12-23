@@ -234,9 +234,17 @@ import { computed, onBeforeMount } from 'vue';
 import { SituationActuelle } from 'src/enums/SituationActuelle.enum';
 import { useRouter } from 'vue-router';
 import { Diplome } from 'src/enums/Diplome.enum';
+import { useToast } from 'src/composables/Toast.composable';
+import { ToastType } from 'src/enums/ToastType.enum';
+import {
+  useConfirmationPopup,
+  useLoadingPopup,
+} from 'src/composables/Popup.composable';
+import { PopupButton } from 'src/enums/Popup.enum';
 
 const router = useRouter();
 const ficheCandidatStore = useFicheCandidatStore();
+const { loadingPopup } = useLoadingPopup();
 
 const competence1 = computed({
   get() {
@@ -312,16 +320,31 @@ onBeforeMount(() => {
 });
 
 function onAnnuler() {
-  router.push({ name: 'candidat' });
+  const { confirmationPopup } = useConfirmationPopup(
+    'Confirmation',
+    'Voulez vous vraiment quitter cette page ?'
+  );
+
+  confirmationPopup.onOk(async ({ clicked }) => {
+    if (clicked === PopupButton.YES) {
+      router.push({ name: 'candidat' });
+    }
+  });
 }
 
 async function onSubmit() {
+  loadingPopup.show();
   await ficheCandidatStore.updateFicheCandidat();
+  loadingPopup.hide();
   router.push({ name: 'candidat' });
 }
 
 function displayInvalidFormError() {
-  console.log('form error');
+  useToast(
+    'Erreur',
+    'Veuillez verifier les valeurs dans les champs',
+    ToastType.ERROR
+  );
 }
 </script>
 

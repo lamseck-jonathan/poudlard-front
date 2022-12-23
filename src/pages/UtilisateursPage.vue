@@ -60,7 +60,7 @@ onBeforeMount(() => {
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
     icon: 'mdi-account-multiple-outline',
-    title: 'utilisateur',
+    title: 'utilisateurs',
     routeName: 'utilisateur',
     path: '/utilisateurs',
   });

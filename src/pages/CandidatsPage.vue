@@ -6,6 +6,7 @@
       :rows="users"
       :action-btn="false"
       :context-menu-items="menuItems"
+      :loading="userStore.isLoading"
       @click:context-item="
         ({ itemMenu, data }) => onContextMenuClick(itemMenu, data)
       "
@@ -33,7 +34,7 @@ const userStore = useUserStore();
 onMounted(() => {
   mainLayoutStore.setNavBarpageInfo({
     icon: 'emoji_events',
-    title: 'candidat',
+    title: 'candidats',
     routeName: 'candidats',
     path: '/candidats',
   });

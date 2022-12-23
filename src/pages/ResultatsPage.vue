@@ -39,7 +39,7 @@ onBeforeMount(() => {
 
   mainLayoutStore.setNavBarpageInfo({
     icon: 'mdi-clipboard-text-outline',
-    title: 'resultat',
+    title: 'resultats',
     routeName: 'resultats  ',
     path: '/resultats',
   });
@@ -76,6 +76,7 @@ const rows = computed(() => {
     candidat: el.candidat,
     statut: el.statut,
     sujet: el.sujet,
+    titreSujet: el.sujet.titre,
     reponseCandidat: el.reponseCandidat,
   }));
 });
@@ -93,6 +94,13 @@ const columns: DatagridColumns[] = [
     label: 'Email',
     align: 'left',
     field: (row) => row.email,
+    sortable: true,
+  },
+  {
+    name: 'titreSujet',
+    label: 'Titre du sujet',
+    align: 'left',
+    field: (row) => row.candidatLabel,
     sortable: true,
   },
   {

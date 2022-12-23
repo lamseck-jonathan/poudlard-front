@@ -85,7 +85,7 @@ const { loadingPopup } = useLoadingPopup();
 onMounted(async () => {
   mainLayoutStore.setNavBarpageInfo({
     icon: 'quiz',
-    title: 'test',
+    title: 'tests',
     routeName: 'test',
     path: '/tests',
   });
